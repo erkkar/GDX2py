@@ -1,2 +1,5 @@
 .spyderproject
 *.pyc
+*.egg-info/
+build/
+dist/
