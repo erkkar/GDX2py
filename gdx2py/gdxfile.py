@@ -245,6 +245,11 @@ class GdxFile(object):
         if not ret:
             warn("Symbol not found!")
             return None
+        
+        # Get domain of symbol
+        ret, domain = gdxSymbolGetDomainX(self._h, symno)
+        if not ret:
+            domain = []
 
         # Start reading as strings
         recs = self._readstrstart(symno)
@@ -278,6 +283,8 @@ class GdxFile(object):
             idx = pd.MultiIndex.from_tuples(keys)
         except ValueError:
             idx = None
+        else:
+            idx.names = [(d if d != '*' else None) for d in domain]
         return pd.Series(values, index=idx, name=self._get_expl_text(symno))
 
     def _write_symbol(self, symtype, symname, data, expl_text = ""):
@@ -313,6 +320,12 @@ class GdxFile(object):
             self._writestrstart(symname, symtype, dims, expl_text)
         except:
             raise
+            
+        # Define domain
+        domain = [(d if d is not None else '*') for d in data.index.names]
+        ret = gdxSymbolSetDomainX(self._h, self._find_symbol(symname), domain)
+        if not ret:
+            raise RuntimeError("Unable to set domain for symbol '{}'".format(symname))
 
         # Init indices and value arrays
         key = GMS_MAX_INDEX_DIM * ['']
