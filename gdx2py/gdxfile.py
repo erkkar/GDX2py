@@ -274,8 +274,8 @@ class GdxFile(object):
                     values[i] = assoc_text
                 else:
                     values[i] = None
-            # For parameters, read the value
-            elif symtype == GMS_DT_PAR:
+            # For other types, read the value
+            else:
                 values[i] = value
 
         gdxDataReadDone(self._h)
