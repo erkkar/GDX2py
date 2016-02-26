@@ -23,6 +23,21 @@ TYPE_STR = {
     GMS_DT_ALIAS: 'alias',
 }
 
+# Define data types
+GDX_DTYPE_CHAR = 'U254'  # max. length for set associated text is 254 chars.
+GDX_DTYPE_NUM = 'f8'
+
+# Python version of GAMS special values
+SPECIAL_VALUES = {
+    GMS_SV_UNDEF: np.nan,
+    GMS_SV_NA   : np.nan,
+    GMS_SV_PINF : np.inf,
+    GMS_SV_MINF : -np.inf,
+    GMS_SV_EPS  : np.finfo(GDX_DTYPE_NUM).eps,
+    GMS_SV_ACR  : np.nan,
+    GMS_SV_NAINT: np.nan,
+}
+
 
 class GdxFile(object):
     """Class for working with a gdx file
@@ -257,16 +272,22 @@ class GdxFile(object):
         # Initialize keys and values arrays
         keys = np.empty(recs, dtype=tuple)
         if symtype == GMS_DT_SET:
-            dtype = 'U254'  # max. length for set associated text is 254 chars.
-        elif symtype == GMS_DT_PAR:
-            dtype = 'f8'
-        values = np.empty(recs, dtype=dtype)
+            dtype = GDX_DTYPE_CHAR
+            fv = ''
+        else:
+            dtype = GDX_DTYPE_NUM
+            fv = np.nan
+        values = np.full(recs, fill_value=fv, dtype=dtype)
 
         for i in range(recs):
             # Read GDX data
             ret, key, value, afdim = gdxDataReadStr(self._h)
-            value = value[GMS_VAL_LEVEL]
             keys[i] = tuple(key)
+            value = value[GMS_VAL_LEVEL]
+            # Check for GAMS special values
+            for sv in SPECIAL_VALUES:
+                if np.isclose(value, sv):
+                    value = SPECIAL_VALUES[sv]
             # For sets, read associated text and store as the value
             if symtype == GMS_DT_SET:
                 ret, assoc_text, node = gdxGetElemText(self._h, int(value))
