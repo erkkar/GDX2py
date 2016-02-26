@@ -15,7 +15,7 @@ import numpy as np
 from gdxcc import *
 
 # String representations of API constants
-type_str = {
+TYPE_STR = {
     GMS_DT_SET: 'set',
     GMS_DT_PAR: 'parameter',
     GMS_DT_VAR: 'variable',
@@ -110,7 +110,7 @@ class GdxFile(object):
         symbols += (4 + 20 + 5 + 3) * '-' + '\n'
         for i in range(1, sym_cnt + 1):
             ret, sym, dim, symtype = gdxSymbolInfo(self._h, i)
-            symbols += line.format(i, sym, type_str[symtype][0:3], dim)
+            symbols += line.format(i, sym, TYPE_STR[symtype][0:3], dim)
 
         return header + symbols
 
