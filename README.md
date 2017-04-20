@@ -9,6 +9,11 @@ Install [GAMS](https://www.gams.com/) and GAMS Data Exchange API for Python.
     > cd /path/to/GAMS/apifiles/Python/api
     > python gdxsetup.py install
 
+###Other dependencies
+- Numpy: 1.8.1 or higher
+- pandas: 0.17.1 or higher
+
+
 ## Installation
 
     python setup.py install
