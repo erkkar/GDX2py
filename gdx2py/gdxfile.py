@@ -56,7 +56,8 @@ class GdxFile(object):
     name : str
         Gdx file name
     mode : str
-        File open mode: 'r' for reading
+        File open mode: 'r' for reading, 'w' for writing, 
+        'w+' for appending (replaces existing symbol)
     gams_dir : str, optional
         Location of GAMS installation directory
 

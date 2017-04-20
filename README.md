@@ -21,8 +21,10 @@ Install [GAMS](https://www.gams.com/) and GAMS Data Exchange API for Python.
 ## Usage
 
     >>> from gdx2py import GdxFile
-    >>> f = GdxFile('/path/to/gdx/file.gdx')
-    >>> f['a_parameter']
+    >>> with GdxFile('/path/to/gdx/file.gdx', mode='w') as f:
+    >>>     sym1 = f['symb1']  # Get a symbol
+    >>>     sym2 = sym1 * 2 
+    >>>     f['sym2'] = sym2   # Set a symbol
 
 Symbols are Pandas Series objects.
  
