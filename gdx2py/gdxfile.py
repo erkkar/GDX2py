@@ -56,7 +56,8 @@ class GdxFile(object):
     name : str
         Gdx file name
     mode : str
-        File open mode: 'r' for reading
+        File open mode: 'r' for reading, 'w' for writing, 
+        'w+' for appending (replaces existing symbol)
     gams_dir : str, optional
         Location of GAMS installation directory
 
@@ -512,7 +513,7 @@ class GdxFile(object):
             else:        
                 value_arr[GMS_VAL_LEVEL] = values[i]
 
-            gdxDataWriteStr(self._h, list(keys[i]), value_arr)
+            gdxDataWriteStr(self._h, [str(k) for k in keys[i]], value_arr)
 
         gdxDataWriteDone(self._h)
 
