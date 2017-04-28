@@ -513,7 +513,7 @@ class GdxFile(object):
             else:        
                 value_arr[GMS_VAL_LEVEL] = values[i]
 
-            gdxDataWriteStr(self._h, list(keys[i]), value_arr)
+            gdxDataWriteStr(self._h, [str(k) for k in keys[i]], value_arr)
 
         gdxDataWriteDone(self._h)
 
