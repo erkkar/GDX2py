@@ -445,7 +445,7 @@ class GdxFile(object):
         # Return final Series
         return pd.Series(values, index=idx, name=self._get_expl_text(symno))
 
-    def _write_symbol(self, symtype, symname, data, expl_text = ""):
+    def _write_symbol(self, symtype, symname, data, expl_text=None):
         """Write a Pandas series to a GAMS Set symbol
 
         Parameters
@@ -481,6 +481,9 @@ class GdxFile(object):
         values = data.values
         
         set_has_text = data.notnull().any()
+        
+        if expl_text is None:
+            expl_text = ''
         
         # Begin writing to a symbol
         try:
