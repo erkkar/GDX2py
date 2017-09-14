@@ -2,7 +2,8 @@
 
 from setuptools import setup, find_packages
 
-from gdx2py import __version__
+# Get version string
+with open('gdx2py/version.py') as f: exec(f.read())
 
 setup(name='GDX2py',
       version=__version__,
