@@ -5,6 +5,4 @@ Created on Wed Feb 24 11:01:10 2016
 @author: ererkka
 """
 
-__version__ = '1.2.1'
-
-from .gdxfile import GdxFile
+__version__ = '1.2.2'
