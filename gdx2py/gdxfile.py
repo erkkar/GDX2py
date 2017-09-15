@@ -56,7 +56,7 @@ class GdxFile(object):
     name : str
         Gdx file name
     mode : str
-        File open mode: 'r' for reading, 'w' for writing, 
+        File open mode: 'r' for reading, 'w' for writing,
         'w+' for appending (replaces existing symbol)
     gams_dir : str, optional
         Location of GAMS installation directory
@@ -109,14 +109,14 @@ class GdxFile(object):
                 raise FileNotFoundError(self.filename)
             else:
                 raise OSError(gdxErrorStr(self._h, errno)[1])
-        
+
         # Set up unique element map
         self._UEL_map = {}
-        
-        # Vectorize 
-        self._get_uel_string = np.vectorize(self._get_uel_string, 
+
+        # Vectorize
+        self._get_uel_string = np.vectorize(self._get_uel_string,
                                             otypes=[GDX_DTYPE_LABEL])
-        self._get_set_assoc_text = np.vectorize(self._get_set_assoc_text, 
+        self._get_set_assoc_text = np.vectorize(self._get_set_assoc_text,
                                                 otypes=[GDX_DTYPE_TEXT])
 
     def __del__(self):
@@ -142,7 +142,7 @@ class GdxFile(object):
             symbols += line.format(i, sym, TYPE_STR[symtype][0:3], dim)
 
         return header + symbols
-        
+
     def __len__(self):
         ret, sym_count, uel_cnt = gdxSystemInfo(self._h)
         if ret:
@@ -176,18 +176,21 @@ class GdxFile(object):
                 raise NotImplementedError("Cannot replace "
                                           "existing symbol '{}'".format(key))
             else:
-                if not isinstance(data, pd.core.series.Series):
+                if isinstance(data, tuple):
+                    indices, values = data
+                elif isinstance(data, list):
                     # Try to convert a list (of tuples) into a pd.Series
-                    idx = data
+                    indices = data
+                    values = None
+                if not isinstance(data, pd.core.series.Series):
                     try:
-                        if isinstance(data[0], tuple):
-                            idx = pd.MultiIndex.from_tuples(data)
+                        idx = pd.MultiIndex.from_tuples(indices)
                     except TypeError:
                         warn("Cannot interpret input data!")
                         return None
-                    data = pd.Series(index=idx, dtype=object)
-                
-                if data.dtype == object:
+                    data = pd.Series(index=idx, data=values)
+
+                if values is None or data.dtype == object:
                     self._write_symbol(GMS_DT_SET, key, data, data.name)
                 else:
                     self._write_symbol(GMS_DT_PAR, key, data, data.name)
@@ -208,7 +211,7 @@ class GdxFile(object):
             return symno
         else:
             return None
-    
+
     def _get_symname(self, symno):
         """Get symbol name for a number"""
         ret, sym, _, _ = gdxSymbolInfo(self._h, symno)
@@ -216,7 +219,7 @@ class GdxFile(object):
             return sym
         else:
             return None
-            
+
     def _get_symtype(self, symno):
         """Get symbol type"""
         ret, _, _, symtype = gdxSymbolInfo(self._h, symno)
@@ -231,7 +234,7 @@ class GdxFile(object):
             return expl_text.encode(errors='replace').decode()
         else:
             return None
-            
+
     def _get_domain(self, symno):
         """Get domain for symbol"""
         ret, domain = gdxSymbolGetDomainX(self._h, symno)
@@ -239,12 +242,12 @@ class GdxFile(object):
             return domain
         else:
             return []
-            
+
     def _convert_string_index(self, index_labels):
         recs = len(index_labels)
         dims = len(index_labels[0])
         indices = np.empty(recs, dtype=intArray)
-        
+
         assert gdxUELRegisterRawStart(self._h)
         for i in range(recs):
             indices[i] = intArray(dims)
@@ -259,9 +262,9 @@ class GdxFile(object):
                 finally:
                     indices[i][j] = uel_idx
         assert gdxUELRegisterDone(self._h)
-            
+
         return indices
-            
+
     def _get_uel_string(self, uel_nr):
         try:
             return self._UEL_map[uel_nr]
@@ -273,7 +276,7 @@ class GdxFile(object):
                 return label
             else:
                 return ''
-                
+
     def _get_set_assoc_text(self, value):
         ret, assoc_text, node = gdxGetElemText(self._h, int(value))
         if ret:
@@ -303,7 +306,7 @@ class GdxFile(object):
             raise Exception(gdxErrorStr(self._h, gdxGetLastError(self._h))[1])
         else:
             return recs
-            
+
     def _readrawstart(self, symno):
         """Start raw mode reading at given symbol
 
@@ -352,7 +355,7 @@ class GdxFile(object):
             raise Exception(gdxErrorStr(self._h, gdxGetLastError(self._h))[1])
         else:
             return None
-            
+
     def _writerawstart(self, symname, symtype, dim, expl_text = ""):
         """Start writing a symbol in raw mode
 
@@ -396,10 +399,10 @@ class GdxFile(object):
         if not ret:
             warn("Symbol not found!")
             return None
-        
+
         # Get domain of symbol
         domain = self._get_domain(symno)
-        
+
         # Get length of longest label
         label_maxlen = gdxSymbIndxMaxLength(self._h, symno)[0]
 
@@ -408,9 +411,9 @@ class GdxFile(object):
         recs = self._readstrstart(symno)
 
         # Initialize keys and values arrays
-        keys = np.empty((recs, dim), 
+        keys = np.empty((recs, dim),
                         dtype='U{}'.format(label_maxlen))
-        values = np.full((recs, GMS_VAL_MAX), fill_value=np.nan, 
+        values = np.full((recs, GMS_VAL_MAX), fill_value=np.nan,
                          dtype=GDX_DTYPE_NUM)
 
         # Read GDX data
@@ -420,10 +423,10 @@ class GdxFile(object):
             #DP = new_TDataStoreProc_tp()
             #ret = gdxDataReadRawFast(self._h, symno, DP)
         gdxDataReadDone(self._h)
-        
+
         # Only take values for now
         values = values[:, GMS_VAL_LEVEL]
-        
+
         # For sets, read associated text and replace as the value
         if symtype == GMS_DT_SET and gdxSetHasText(self._h, symno):
            values = self._get_set_assoc_text(values)
@@ -431,7 +434,7 @@ class GdxFile(object):
             # Check for GAMS special values
             for sv in SPECIAL_VALUES:
                 values[np.isclose(values, sv)] = SPECIAL_VALUES[sv]
-        
+
         try:
             # Get string labels and build the index
             #idx = pd.MultiIndex.from_arrays(self._get_uel_string(keys).T)
@@ -441,7 +444,7 @@ class GdxFile(object):
         else:
             # Set index level names
             idx.names = [(d if d != '*' else None) for d in domain]
-            
+
         # Return final Series
         return pd.Series(values, index=idx, name=self._get_expl_text(symno))
 
@@ -472,32 +475,32 @@ class GdxFile(object):
             dims = len(data.index.levels)
         except AttributeError:
             dims = 1
-            
+
         recs = len(data.index)
-        
+
         keys = data.index.values
         if dims == 1:
-            keys = keys.reshape((-1, 1))    
+            keys = keys.reshape((-1, 1))
         values = data.values
-        
+
         set_has_text = data.notnull().any()
-        
+
         if expl_text is None:
             expl_text = ''
-        
+
         # Begin writing to a symbol
         try:
             #self._writerawstart(symname, symtype, dims, expl_text)
             self._writestrstart(symname, symtype, dims, expl_text)
         except:
             raise
-            
+
         # Define domain
         domain = [(d if d is not None else '*') for d in data.index.names]
         ret = gdxSymbolSetDomainX(self._h, self._find_symbol(symname), domain)
         if not ret:
             raise RuntimeError("Unable to set domain for symbol '{}'".format(symname))
-        
+
         # Init value array
         value_arr = doubleArray(GMS_VAL_MAX)
         for i in range(recs):
@@ -506,14 +509,14 @@ class GdxFile(object):
             if symtype == GMS_DT_SET:
                 if set_has_text and pd.notnull(values[i]):
                     assoc_text = copy(values[i])
-                    ret, value_arr[GMS_VAL_LEVEL] = gdxAddSetText(self._h, 
+                    ret, value_arr[GMS_VAL_LEVEL] = gdxAddSetText(self._h,
                                                                str(assoc_text))
                     if not ret:
                         warn("Unable to register string '{}' "
                              "to string table".format(assoc_text))
                 else:
                     value_arr[GMS_VAL_LEVEL] = 0
-            else:        
+            else:
                 value_arr[GMS_VAL_LEVEL] = values[i]
 
             gdxDataWriteStr(self._h, [str(k) for k in keys[i]], value_arr)
