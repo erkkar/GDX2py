@@ -90,15 +90,18 @@ class GdxFile(object):
         if ret == 0:
             raise RuntimeError(err)
 
+        creator = 'Python {}'.format(sys.version)
+
         self.filename = os.path.abspath(filename)
         if mode == 'r':
             ret, errno = gdxOpenRead(self._h, self.filename)
         elif mode == 'w':
-            ret, errno = gdxOpenWrite(self._h, self.filename,
-                                      'Python {}'.format(sys.version))
+            ret, errno = gdxOpenWrite(self._h, self.filename, creator)
         elif mode == 'w+' or mode == 'a':
-            ret, errno = gdxOpenAppend(self._h, self.filename,
-                                      'Python {}'.format(sys.version))
+            ret, errno = gdxOpenAppend(self._h, self.filename, creator)
+            # Fallback to creating a new file if not found
+            if ret == 0 and errno == -100041:
+                ret, errno = gdxOpenWrite(self._h, self.filename, creator)
         else:
             raise ValueError("Unsupported mode '{}'.".format(mode))
         self._mode = mode
