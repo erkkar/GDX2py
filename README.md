@@ -1,5 +1,6 @@
 # GDX2py
-Read and write GAMS Data eXchange (GDX) files using Python
+Read and write GAMS Data eXchange (GDX) files using Python.  
+NOTE: You might want to check out [gdx-pandas](https://github.com/NREL/gdx-pandas), which seems like a more feature rich implementation.
 
 ## Requirements
 Install [GAMS](https://www.gams.com/) and GAMS Data Exchange API for Python. 
