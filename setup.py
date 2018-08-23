@@ -15,6 +15,9 @@ setup(name='GDX2py',
         'numpy>=1.10',
         'pandas>=0.17.1'
       ],
+      setup_requires=['pytest-runner'],
+      tests_require=['pytest', 'pytest-datadir'],
+
       url='https://github.com/ererkka/GDX2py',
       packages=find_packages(),
 )
