@@ -431,8 +431,11 @@ class GdxFile(object):
         values = values[:, GMS_VAL_LEVEL]
 
         # For sets, read associated text and replace as the value
-        if symtype == GMS_DT_SET and gdxSetHasText(self._h, symno):
-           values = self._get_set_assoc_text(values)
+        if symtype == GMS_DT_SET:
+            if gdxSetHasText(self._h, symno):
+                values = self._get_set_assoc_text(values)
+            else:
+                values.fill(np.nan)
         else:
             # Check for GAMS special values
             for sv in SPECIAL_VALUES:
