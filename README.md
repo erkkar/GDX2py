@@ -1,22 +1,38 @@
 # GDX2py
+
 Read and write GAMS Data eXchange (GDX) files using Python
 
+
 ## Requirements
-Install [GAMS](https://www.gams.com/) and GAMS Data Exchange API for Python. 
 
-### GAMS Data Exchange API installation
-
-    > cd /path/to/GAMS/apifiles/Python/api
-    > python gdxsetup.py install
-
-### Other dependencies
+- GAMS: version 24.1 or higher
+- Python: 3.6 or higher
 - Numpy: 1.8.1 or higher
 - pandas: 0.17.1 or higher
+- GAMS Data Exchange API (gdxcc): 7.0 or higher
+
+
+### Installing GAMS
+
+Get GAMS from [https://www.gams.com/download/](https://www.gams.com/download/) 
+and install it to your system. No license is needed for the use of GDX libraries.
+
+
+### Other requirements
+
+Install other requirements using
+
+    pip install -r requirements.txt
 
 
 ## Installation
 
-    python setup.py install
+Install with
+
+    pip install [-e] .
+    
+Use the `-e` switch to install in editable mode (for development).
+
 
 ## Usage
 
@@ -26,6 +42,8 @@ Install [GAMS](https://www.gams.com/) and GAMS Data Exchange API for Python.
     >>>     sym2 = sym1 * 2 
     >>>     f['sym2'] = sym2   # Set a symbol
 
-Symbols are Pandas Series objects. Multidimensional sets or parameters are indexed with a MultiIndex. For sets, element explanatory text is stored as the Series data.
+Symbols are Pandas Series objects. Multidimensional sets or parameters are 
+indexed with a MultiIndex. For sets, element explanatory text is stored as 
+the Series data.
  
 
