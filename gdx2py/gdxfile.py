@@ -173,7 +173,7 @@ class GdxFile(object):
         """Store Pandas Series object or a list of tuples into a GAMS symbol
         """
         if self._mode == 'r':
-            raise IOError("Cannot write in mode '{}'".format(mode))
+            raise IOError("Cannot write in mode '{}'".format(self._mode))
         else:
             if self._find_symbol(key) is not None:
                 raise NotImplementedError("Cannot replace "
@@ -431,8 +431,11 @@ class GdxFile(object):
         values = values[:, GMS_VAL_LEVEL]
 
         # For sets, read associated text and replace as the value
-        if symtype == GMS_DT_SET and gdxSetHasText(self._h, symno):
-           values = self._get_set_assoc_text(values)
+        if symtype == GMS_DT_SET:
+            if gdxSetHasText(self._h, symno):
+                values = self._get_set_assoc_text(values)
+            else:
+                values.fill(np.nan)
         else:
             # Check for GAMS special values
             for sv in SPECIAL_VALUES:
@@ -482,8 +485,6 @@ class GdxFile(object):
         recs = len(data.index)
 
         keys = data.index.values
-        if dims == 1:
-            keys = keys.reshape((-1, 1))
         values = data.values
 
         set_has_text = data.notnull().any()
