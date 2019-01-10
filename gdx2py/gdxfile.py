@@ -192,6 +192,8 @@ class GdxFile(object):
                         warn("Cannot interpret input data!")
                         return None
                     data = pd.Series(index=idx, data=values)
+                else:
+                    values = data.values
 
                 if values is None or data.dtype == object:
                     self._write_symbol(GMS_DT_SET, key, data, data.name)
