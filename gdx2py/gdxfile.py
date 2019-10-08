@@ -451,7 +451,11 @@ class GdxFile(object):
             idx = None
         else:
             # Set index level names
-            idx.names = [(d if d != '*' else None) for d in domain]
+            if len(idx.levels) == 1:
+                idx = idx.levels[0]  # Simplify as regular index
+                idx.name = domain[0] if domain[0] != '*' else None
+            else:
+                idx.names = [(d if d != '*' else None) for d in domain]
 
         # Return final Series
         return pd.Series(values, index=idx, name=self._get_expl_text(symno))
@@ -523,7 +527,7 @@ class GdxFile(object):
                 else:
                     value_arr[GMS_VAL_LEVEL] = 0
             else:
-                value_arr[GMS_VAL_LEVEL] = values[i]
+                value_arr[GMS_VAL_LEVEL] = float(values[i])
 
             gdxDataWriteStr(self._h, [str(k) for k in keys[i]], value_arr)
 
