@@ -12,12 +12,9 @@ setup(name='GDX2py',
       description='Read and write GAMS Data eXchange (GDX) files using Python',
       install_requires=[
         'gdxcc>=7',
-        'numpy>=1.10',
-        'pandas>=0.17.1'
       ],
       setup_requires=['pytest-runner'],
       tests_require=['pytest', 'pytest-datadir'],
-
       url='https://github.com/ererkka/GDX2py',
       packages=find_packages(),
 )
