@@ -99,7 +99,3 @@ def test_parameter_to_dict():
     par = GAMSParameter('par', simple_list, list_of_values)
     assert dict(par) == {key: value for key, value in zip(simple_list, list_of_values)}
     
-
-if __name__ == '__main__':
-    par = GAMSParameter('par', list_of_tuples, list_of_values)
-    list(par.keys())
