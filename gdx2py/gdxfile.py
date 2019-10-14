@@ -437,7 +437,7 @@ class GdxFile(object):
             if dim == 0:
                 return GAMSScalar(sym, values[0])
             else:
-                return GAMSParameter(sym, keys, values)
+                return GAMSParameter(sym, dict(zip(keys, values)))
 
     def _write_symbol(self, symbol):
         """Write a Pandas series to a GAMS Set symbol

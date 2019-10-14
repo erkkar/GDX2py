@@ -1,6 +1,6 @@
 """Module contains classes for handling GAMS symbols"""
 
-from typing import List
+from typing import List, Dict
 
 
 class _GAMSSymbol(object):
@@ -146,13 +146,12 @@ class GAMSParameter(_GAMSNDimSymbol):
     """Class for GAMS Parameters
     """
 
-    def __init__(self, name: str, keys: List[tuple], values: List[float], domain: List[str] = None, expl_text: str = ''):
+    def __init__(self, name: str, data: Dict[tuple, float], domain: List[str] = None, expl_text: str = ''):
         """Constructor for GAMSParameter
 
         Args:
             name: Name of the symbol
-            keys: List of tuples of strings for the keys
-            values: List of floats for the values
+            data: Dictionay of keys and values
             domain (optional): List of domain set names
             expl_text (optional): Explanatory text
 
@@ -160,47 +159,27 @@ class GAMSParameter(_GAMSNDimSymbol):
             ValueError
         """
 
-        super().__init__(name, keys, domain, expl_text)
-        self._type = 'Parameter'
-
-        try:
-            values_length = len(values)
-        except TypeError:
-            ValueError("Values must be a list")
-        if values_length != self._size:
-                raise ValueError(f"Length of values ({values_length}) differs from length of keys ({self._size})")
+        # Check arguments
+        if not isinstance(data, dict):
+            raise ValueError("Data must be a dictionary")
         else:
-            self._values = values
+            super().__init__(name, list(data.keys()), domain, expl_text)
+            self._type = 'Parameter'
+            self._data = data
 
     def keys(self):
-        iterator = iter(self._keys)
-        while True:
-            try:
-                yield next(iterator)
-            except StopIteration:
-                break
+        return self._data.keys()
     
     def values(self):
-        iterator = iter(self._values)
-        while True:
-            try:
-                yield float(next(iterator))
-            except StopIteration:
-                break
+        return self._data.values()
 
     def __getitem__(self, key):
-        try:
-            idx = self._keys.index(key)
-        except ValueError:
-            raise KeyError(key)
-        else:
-            return self._values[idx]
+        return self._data[key]
     
     def __iter__(self):
-        self._keys_iterator = iter(self._keys)
-        self._values_iterator = iter(self._values)
+        self._iterator = iter(self._data.items())
         return self
 
     def __next__(self):
-        return (next(self._keys_iterator), 
-                float(next(self._values_iterator)))
+        key, val = next(self._iterator)
+        return key, float(val)
