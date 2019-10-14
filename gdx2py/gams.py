@@ -1,6 +1,6 @@
 """Module contains classes for handling GAMS symbols"""
 
-from typing import List, Dict
+from typing import Sequence, Mapping
 
 
 class _GAMSSymbol(object):
@@ -38,7 +38,7 @@ class _GAMSSymbol(object):
 class _GAMSNDimSymbol(_GAMSSymbol):
     """Abstarct class for N-dimensional GAMS symbols
     """
-    def __init__(self, name: str, keys: List[tuple], domain: List[str], expl_text: str):
+    def __init__(self, name: str, keys: Sequence[tuple], domain: Sequence[str], expl_text: str):
         """Constructor for GAMSNDimSymbol
 
         Args:
@@ -53,14 +53,11 @@ class _GAMSNDimSymbol(_GAMSSymbol):
 
         super().__init__(name, expl_text)
 
-        # Check arguments
-        if not isinstance(keys, list):
-            raise ValueError("Keys must be a list")
-        if domain and not isinstance(domain, list):
-            raise ValueError("Domain must be a list")
-
         # Calculate dimension
-        first_key = keys[0]
+        try:
+            first_key = keys[0]
+        except TypeError:
+            raise ValueError("Keys must be a sequence")
         if isinstance(first_key, tuple):
             dimension = len(first_key)
             # Check consistency of the keys
@@ -76,9 +73,12 @@ class _GAMSNDimSymbol(_GAMSSymbol):
         self._size = len(keys)
 
         # Check domain length
-        if domain and (len(domain) != self.dimension):
-            raise ValueError("Domain is inconsistent with the given values")
-        else:
+        if domain:
+            try:
+                if len(domain) != self.dimension:
+                    raise ValueError("Domain is inconsistent with the given values")
+            except TypeError:
+                raise ValueError("Domain must be a sequence")
             self.domain = domain
 
     def __len__(self):
@@ -88,13 +88,14 @@ class _GAMSNDimSymbol(_GAMSSymbol):
 class GAMSSet(_GAMSNDimSymbol):
     """Class for GAMS Sets
     """
-    def __init__(self, name: str, keys: List[tuple], domain: List[str] = None, expl_text: str = ''):
+    def __init__(self, name: str, keys: Sequence[tuple], domain: Sequence[str] = None, 
+                 expl_text: str = ''):
         """Constructor for GAMSSet
 
         Args:
             name: Name of the symbol
-            keys: List of tuples of strings for the keys
-            domain (optional): List of domain set names
+            keys: Sequence of tuples of strings for the keys
+            domain (optional): Sequence of domain set names
             expl_text (optional): Explanatory text
 
         Raises:
@@ -146,7 +147,7 @@ class GAMSParameter(_GAMSNDimSymbol):
     """Class for GAMS Parameters
     """
 
-    def __init__(self, name: str, data: Dict[tuple, float], domain: List[str] = None, expl_text: str = ''):
+    def __init__(self, name: str, data: Mapping[tuple, float], domain: Sequence[str] = None, expl_text: str = ''):
         """Constructor for GAMSParameter
 
         Args:
