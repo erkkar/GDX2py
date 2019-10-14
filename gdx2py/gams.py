@@ -10,18 +10,25 @@ class _GAMSSymbol(object):
         name (str): Symbol name
         expl_text (str): Symbol explanatory text
     """
-    def __init__(self, name: str, expl_text: str):
+    def __init__(self, name: str, expl_text: str, gdx):
         """Class constructor
 
         Args:
             name (str): Symbol name
             expl_text (str, optional): Symbol explanatory text
+            gdx (GdxFile, optional): Reference to a gdx file object
         """
         self.name = name
         self.expl_text = expl_text
         self._type = None
         self.domain = None
         self.dimension = None
+        self._gdx = gdx
+
+    def _write(self, gdx):
+        self._gdx = gdx
+        if gdx._mode in ('w', 'w+', 'a'):
+            gdx[self.name] = self
 
     def __str__(self):
         return self.expl_text
@@ -38,7 +45,8 @@ class _GAMSSymbol(object):
 class _GAMSNDimSymbol(_GAMSSymbol):
     """Abstarct class for N-dimensional GAMS symbols
     """
-    def __init__(self, name: str, keys: Sequence[tuple], domain: Sequence[str], expl_text: str):
+    def __init__(self, name: str, keys: Sequence[tuple], domain: Sequence[str], 
+                 expl_text: str, gdx):
         """Constructor for GAMSNDimSymbol
 
         Args:
@@ -46,12 +54,13 @@ class _GAMSNDimSymbol(_GAMSSymbol):
             keys
             domain
             expl_text
+            gdx (GdxFile, optional): Reference to a gdx file object
 
         Raises:
             ValueError
         """
 
-        super().__init__(name, expl_text)
+        super().__init__(name, expl_text, gdx)
 
         # Calculate dimension
         try:
@@ -89,7 +98,7 @@ class GAMSSet(_GAMSNDimSymbol):
     """Class for GAMS Sets
     """
     def __init__(self, name: str, keys: Sequence[tuple], domain: Sequence[str] = None, 
-                 expl_text: str = ''):
+                 expl_text: str = '', gdx=None):
         """Constructor for GAMSSet
 
         Args:
@@ -97,13 +106,16 @@ class GAMSSet(_GAMSNDimSymbol):
             keys: Sequence of tuples of strings for the keys
             domain (optional): Sequence of domain set names
             expl_text (optional): Explanatory text
+            gdx (GdxFile, optional): Reference to a gdx file object
 
         Raises:
             ValueError
         """
 
-        super().__init__(name, keys, domain, expl_text)
+        super().__init__(name, keys, domain, expl_text, gdx)
         self._type = 'Set'
+        if gdx is not None:
+            self._write(gdx)
 
     @property
     def elements(self):
@@ -120,7 +132,7 @@ class GAMSSet(_GAMSNDimSymbol):
 class GAMSScalar(_GAMSSymbol):
     """Class for GAMS Scalars (0-dimensional Parameters)
     """
-    def __init__(self, name: str, value: float, expl_text: str = ''):
+    def __init__(self, name: str, value: float, expl_text: str = '', gdx=None):
         """Class constructor
 
         Args:
@@ -131,10 +143,12 @@ class GAMSScalar(_GAMSSymbol):
             ValueError
         """
 
-        super().__init__(name, expl_text)
+        super().__init__(name, expl_text, gdx)
         self._type = 'Scalar'
         self.dimension = 0
         self._value = float(value)
+        if gdx is not None:
+            self._write(gdx)
 
     def __float__(self):
         return self._value
@@ -147,7 +161,8 @@ class GAMSParameter(_GAMSNDimSymbol):
     """Class for GAMS Parameters
     """
 
-    def __init__(self, name: str, data: Mapping[tuple, float], domain: Sequence[str] = None, expl_text: str = ''):
+    def __init__(self, name: str, data: Mapping[tuple, float], domain: Sequence[str] = None, 
+                 expl_text: str = '', gdx=None):
         """Constructor for GAMSParameter
 
         Args:
@@ -155,6 +170,7 @@ class GAMSParameter(_GAMSNDimSymbol):
             data: Dictionay of keys and values
             domain (optional): List of domain set names
             expl_text (optional): Explanatory text
+            gdx (GdxFile, optional): Reference to a gdx file object
 
         Raises:
             ValueError
@@ -164,9 +180,13 @@ class GAMSParameter(_GAMSNDimSymbol):
         if not isinstance(data, dict):
             raise ValueError("Data must be a dictionary")
         else:
-            super().__init__(name, list(data.keys()), domain, expl_text)
+            super().__init__(name, list(data.keys()), domain, expl_text, gdx)
             self._type = 'Parameter'
             self._data = data
+
+        # Write to gdx
+        if gdx is not None:
+            self._write(gdx)
 
     def keys(self):
         return self._data.keys()
