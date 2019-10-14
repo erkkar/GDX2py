@@ -1,23 +1,12 @@
 # 
 """
 Constants for tests
-"""
 
-
+See file 'data/example_data.gms' for the GAMS code used to create 
+file 'data/example.gdx'.
 """
-* GAMS code used to create 'data/example.gdx'
-
-Set set1 "A one-dimensional set" / a 'alpha',
-                                   b 'beta',
-                                   c 'charlie',
-                                   d 'delta' /;
-Set set2(set1, *) "A multidimensional set" / a.foo, b.bar, c.baz /;
-Scalar CONSTANT "A scalar" / 10 /;
-Parameter par1(set1) "A one-dimensional parameter" /a 1, b 2, c 3, d 4 /;
-Parameter par2(set1, *) "A multidimensional parameter" /a.aaa 10,
-                                                        b.bbb 20,
-                                                        c.ccc 30 /;
-"""
+import sys
+import math
 
 SET1 = ['a', 'b', 'c', 'd']
 SET1_TEXT = "A one-dimensional set"
@@ -39,3 +28,5 @@ PAR2 = {('a', 'aaa'): 10,
         ('c', 'ccc'): 30}
 PAR2_TEXT = "A multidimensional parameter"
 PAR2_DOMAIN = ['set1', None]
+
+PAR3 = {'na': math.nan, 'eps': sys.float_info.min, 'pinf': math.inf, 'ninf': -math.inf}

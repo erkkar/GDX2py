@@ -34,13 +34,16 @@ GDX_DTYPE_TEXT = 'U254'  # max. length for set associated text is 254 chars
 GDX_DTYPE_LABEL = 'U63'  # max. length for set element label is 63 chars
 GDX_DTYPE_NUM = 'f8'
 
+# Define Eps as the smalles float
+EPS_VALUE = sys.float_info.min
+
 # Python version of GAMS special values
 SPECIAL_VALUES = {
     gdxcc.GMS_SV_UNDEF: math.nan,
     gdxcc.GMS_SV_NA   : math.nan,
     gdxcc.GMS_SV_PINF : math.inf,
     gdxcc.GMS_SV_MINF : -math.inf,
-    gdxcc.GMS_SV_EPS  : sys.float_info.min,
+    gdxcc.GMS_SV_EPS  : EPS_VALUE,
     gdxcc.GMS_SV_ACR  : math.nan,
     gdxcc.GMS_SV_NAINT: math.nan,
 }
@@ -419,7 +422,7 @@ class GdxFile(object):
                 keys[i] = tuple(key)
             val = value_arr[GMS_VAL_LEVEL]  # Only take the value level
             for sv in SPECIAL_VALUES:  # Check special values
-                if val == sv:
+                if math.isclose(val, sv):
                     val = SPECIAL_VALUES[sv]
             values[i] = val
         gdxcc.gdxDataReadDone(self._h)
