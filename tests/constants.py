@@ -3,7 +3,6 @@
 Constants for tests
 """
 
-import pandas as pd
 
 """
 * GAMS code used to create 'data/example.gdx'
@@ -20,21 +19,23 @@ Parameter par2(set1, *) "A multidimensional parameter" /a.aaa 10,
                                                         c.ccc 30 /;
 """
 
-SET1 = pd.Series(index=pd.MultiIndex.from_arrays([['a', 'b', 'c', 'd']]), 
-                 data=['alpha', 'beta', 'charlie', 'delta'],
-                 name="A one-dimensional set")
-SET2 = pd.Series(index=pd.MultiIndex.from_tuples([('a', 'foo'), 
-                                                  ('b', 'bar'), 
-                                                  ('c', 'baz')],
-                                                  names=['set1', None]),
-                 dtype=float,
-                 name="A multidimensional set")
-CONSTANT = pd.Series(data=10, dtype=float, name="A scalar")
-PAR1 = pd.Series(index=SET1.index, data=[1, 2, 3, 4], 
-                 dtype=float, name="A one-dimensional parameter")
-PAR2 = pd.Series(index=pd.MultiIndex.from_tuples([('a', 'aaa'), 
-                                                  ('b', 'bbb'), 
-                                                  ('c', 'ccc')],
-                                                  names=['set1', None]),
-                 data=[10, 20, 30], 
-                 dtype=float, name="A one-dimensional parameter")
+SET1 = ['a', 'b', 'c', 'd']
+SET1_TEXT = "A one-dimensional set"
+SET1_ASSOC_TEXTS = ['alpha', 'beta', 'charlie', 'delta']
+
+SET2 = [('a', 'foo'), ('b', 'bar'), ('c', 'baz')]
+SET2_TEXT = "A multidimensional set"
+SET2_DOMAIN = ['set1', None]
+
+CONSTANT = 10
+CONSTANT_TEXT = "A scalar"
+
+PAR1 = {'a': 1, 'b': 2, 'c':3, 'd': 4}
+PAR1_TEXT = "A one-dimensional parameter"
+PAR1_DOMAIN = ['set1']
+
+PAR2 = {('a', 'aaa'): 10, 
+        ('b', 'bbb'): 20, 
+        ('c', 'ccc'): 30}
+PAR2_TEXT = "A multidimensional parameter"
+PAR2_DOMAIN = ['set1', None]
