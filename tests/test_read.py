@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from gdx2py import GdxFile
+from gdx2py.gdxfile import GdxFile
 from gdx2py.gdxfile import EPS_VALUE
 from gdx2py.gams import GAMSSet, GAMSScalar, GAMSParameter
 from .constants import SET1, SET2, CONSTANT, PAR1, PAR2, PAR3
@@ -10,8 +10,8 @@ from .constants import SET1, SET2, CONSTANT, PAR1, PAR2, PAR3
 
 @pytest.fixture
 def example_gdx(shared_datadir):
-    with GdxFile(shared_datadir / 'example.gdx', 'r') as f:
-        yield f
+    with GdxFile(shared_datadir / 'example.gdx', 'r') as gdx:
+        yield gdx
 
 def compare_elements(gdx: GdxFile, symname: str, data: list):
     return list(gdx[symname]) == data

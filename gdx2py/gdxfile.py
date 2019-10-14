@@ -124,7 +124,7 @@ class GdxFile(object):
         # Set up unique element map
         self._UEL_map = {}
 
-        # Vectorize
+        # TODO
         #self._get_uel_string = np.vectorize(self._get_uel_string,
         #                                    otypes=[GDX_DTYPE_LABEL])
         #self._get_set_assoc_text = np.vectorize(self._get_set_assoc_text,
