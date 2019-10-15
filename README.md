@@ -28,11 +28,12 @@ Use the `-e` switch to install in editable mode (for development).
 
     >>> from gdx2py import GdxFile, GAMSSet, GAMSScalar, GAMSParameter
     >>> with GdxFile('/path/to/gdx/file.gdx', mode='w') as gdx:
-    >>>     gdx['set1'] = GAMSSet(['a', 'b', 'c'])  # Write a set
+    >>>     gdx['set1'] = ['a', 'b', 'c']  # Write a simple set
     >>>     set1 = gdx['set1']  # Read a symbol
+    >>>     list(set1)
+    ['a', 'b', 'c']
     >>>     # Write a 2-dimensional set
-    >>>     gdx['set2'] = GAMSSet([('a', 'foo'),  
-                                   ('b', 'bar'), ('c', 'baz')])   
+    >>>     gdx['set2'] = [('a', 'foo'), ('b', 'bar'), ('c', 'baz')]
     >>>     # Write a scalar with explanatory text
     >>>     gdx['scalar'] = GAMSScalar(3.14, expl_text="Value of pi")  
     >>>     # Write a parameter with domain                                     

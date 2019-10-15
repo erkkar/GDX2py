@@ -49,6 +49,17 @@ def test_try_write_when_reading(example_gdx):
         with pytest.raises(IOError):
             example_gdx['set1'] = GAMSSet(SET1, expl_text=SET1_TEXT)
 
+def test_write_python_types(tmp_path):
+    filepath = tmp_path / 'test.gdx'
+    with GdxFile(filepath, mode='w') as gdx:
+        gdx['set1'] = SET1
+        gdx['scalar'] = CONSTANT
+        gdx['par1'] = PAR1
+
+    with GdxFile(filepath, mode='r') as gdx:
+        assert float(gdx['scalar']) == CONSTANT
+        assert compare_elements(gdx, 'set1', SET1)
+        assert compare_values(gdx, 'par1', PAR1)
         
 
 

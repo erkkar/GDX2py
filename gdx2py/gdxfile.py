@@ -10,6 +10,7 @@ import os.path
 import math
 from copy import copy
 from warnings import warn
+from collections.abc import Mapping, Sequence
 
 from gdxcc import (GMS_VAL_LEVEL, 
                    GMS_DT_SET,
@@ -176,7 +177,7 @@ class GdxFile(object):
         else:
             return self._read_symbol(symno)
 
-    def __setitem__(self, name, symbol):
+    def __setitem__(self, name, data):
         """Store a GAMS Symbol object
         """
         if self._mode == 'r':
@@ -184,8 +185,18 @@ class GdxFile(object):
         elif self._find_symbol(name) is not None:
             raise NotImplementedError("Cannot replace "
                                       "existing symbol '{}'".format(name))
-        elif not isinstance(symbol, _GAMSSymbol):
-            raise ValueError("Must provide a GAMS symbol object")
+        
+        # Try for a GAMSSymbol and different Python types
+        if isinstance(data, _GAMSSymbol):
+            symbol = data
+        elif isinstance(data, Sequence):
+            symbol = GAMSSet(data)
+        elif isinstance(data, Mapping):
+            symbol = GAMSParameter(data)
+        elif isinstance(data, float) or isinstance(data, int):
+            symbol = GAMSScalar(data)
+        else:
+            raise ValueError("Could not interpret given data as a GAMS symbol")
         
         self._write_symbol(name, symbol)
 
