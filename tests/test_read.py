@@ -56,3 +56,7 @@ def test_parameter_with_special_values(example_gdx):
     assert math.isinf(par['pinf'])
     assert math.isinf(par['ninf'])
 
+def test_read_not_found(example_gdx):
+    with pytest.raises(KeyError):
+        example_gdx['foobar']
+

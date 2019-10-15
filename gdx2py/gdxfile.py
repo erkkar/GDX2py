@@ -172,8 +172,7 @@ class GdxFile(object):
         except ValueError:
             symno = self._find_symbol(key)
         if symno is None:
-            warn("Symbol '{}' not found!".format(key))
-            return None
+            raise KeyError(key)
         else:
             return self._read_symbol(symno)
 
