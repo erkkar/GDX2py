@@ -7,14 +7,12 @@ class _GAMSSymbol(object):
     """Abstarct class for handling GAMS symbols
 
     Attributes:
-        name (str): Symbol name
         expl_text (str): Symbol explanatory text
     """
     def __init__(self, expl_text: str):
         """Class constructor
 
         Args:
-            name (str): Symbol name
             expl_text (str, optional): Symbol explanatory text
         """
         self.expl_text = expl_text
@@ -74,6 +72,10 @@ class _GAMSNDimSymbol(_GAMSSymbol):
 
 class GAMSSet(_GAMSNDimSymbol):
     """Class for GAMS Sets
+
+    Attributes:
+        elements (list): Set elements
+        expl_text (str): Symbol explanatory text
     """
     def __init__(self, keys: Sequence[tuple], domain: Sequence[str] = None, 
                  expl_text: str = ''):
@@ -105,6 +107,9 @@ class GAMSSet(_GAMSNDimSymbol):
 
 class GAMSScalar(_GAMSSymbol):
     """Class for GAMS Scalars (0-dimensional Parameters)
+
+    Attributes:
+        expl_text (str): Symbol explanatory text
     """
     def __init__(self, value: float, expl_text: str = ''):
         """Class constructor
@@ -131,6 +136,14 @@ class GAMSScalar(_GAMSSymbol):
 
 class GAMSParameter(_GAMSNDimSymbol):
     """Class for GAMS Parameters
+    
+    Attributes:
+        domain (list): List of set names that make the domain of the symbol
+        expl_text (str): Symbol explanatory text
+
+    Methods:
+        keys: Return a view to the symbol's keys
+        values: Return a view to the symbol's values
     """
 
     def __init__(self, data: Mapping[tuple, float], domain: Sequence[str] = None, expl_text: str = ''):
