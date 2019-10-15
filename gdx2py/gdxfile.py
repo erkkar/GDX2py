@@ -432,12 +432,12 @@ class GdxFile(object):
             if gdxcc.gdxSetHasText(self._h, symno):
                 pass # TODO
                 #assoc_texts = self._get_set_assoc_text(values)
-            return GAMSSet(sym, keys, domain, gdx=self)
+            return GAMSSet(sym, keys, domain)
         elif symtype == GMS_DT_PAR:
             if dim == 0:
-                return GAMSScalar(sym, values[0], gdx=self)
+                return GAMSScalar(sym, values[0])
             else:
-                return GAMSParameter(sym, dict(zip(keys, values)), gdx=self)
+                return GAMSParameter(sym, dict(zip(keys, values)))
 
     def _write_symbol(self, symbol):
         """Write a Pandas series to a GAMS Set symbol
