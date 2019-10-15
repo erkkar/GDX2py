@@ -42,13 +42,13 @@ class _GAMSNDimSymbol(_GAMSSymbol):
 
         # Calculate dimension
         try:
-            first_key = keys[0]
+            first_key = next(iter(keys))
         except TypeError:
             raise ValueError("Keys must be a sequence")
         if isinstance(first_key, tuple):
             dimension = len(first_key)
             # Check consistency of the keys
-            if not all(len(key) == dimension for key in keys):
+            if not all(len(key) == dimension for key in iter(keys)):
                 raise ValueError("Check consistency of the keys argument")
             else:
                 self.dimension = dimension
@@ -56,7 +56,7 @@ class _GAMSNDimSymbol(_GAMSSymbol):
             self.dimension = 1
 
         # Store keys
-        self._keys = keys
+        self._keys = list(keys)
         self._size = len(keys)
 
         # Check domain length
@@ -149,7 +149,7 @@ class GAMSParameter(_GAMSNDimSymbol):
         if not isinstance(data, dict):
             raise ValueError("Data must be a dictionary")
         else:
-            super().__init__(list(data.keys()), domain, expl_text)
+            super().__init__(data.keys(), domain, expl_text)
             self._type = 'Parameter'
             self._data = data
 
