@@ -10,39 +10,26 @@ class _GAMSSymbol(object):
         name (str): Symbol name
         expl_text (str): Symbol explanatory text
     """
-    def __init__(self, name: str, expl_text: str):
+    def __init__(self, expl_text: str):
         """Class constructor
 
         Args:
             name (str): Symbol name
             expl_text (str, optional): Symbol explanatory text
         """
-        self.name = name
         self.expl_text = expl_text
         self._type = None
         self.domain = None
         self.dimension = None
 
-    def __str__(self):
-        return self.expl_text
-
-    def __repr__(self):
-        text = f'{self._type} {self.name}'
-        if self.domain:
-            text += f'({",".join(str(d) for d in self.domain)})'  # pylint: disable=not-an-iterable
-        if self.expl_text:
-            text += f' "{self.expl_text}"'
-        return text
-
 
 class _GAMSNDimSymbol(_GAMSSymbol):
     """Abstarct class for N-dimensional GAMS symbols
     """
-    def __init__(self, name: str, keys: Sequence[tuple], domain: Sequence[str], expl_text: str):
+    def __init__(self, keys: Sequence[tuple], domain: Sequence[str], expl_text: str):
         """Constructor for GAMSNDimSymbol
 
         Args:
-            name
             keys
             domain
             expl_text
@@ -51,7 +38,7 @@ class _GAMSNDimSymbol(_GAMSSymbol):
             ValueError
         """
 
-        super().__init__(name, expl_text)
+        super().__init__(expl_text)
 
         # Calculate dimension
         try:
@@ -88,12 +75,11 @@ class _GAMSNDimSymbol(_GAMSSymbol):
 class GAMSSet(_GAMSNDimSymbol):
     """Class for GAMS Sets
     """
-    def __init__(self, name: str, keys: Sequence[tuple], domain: Sequence[str] = None, 
+    def __init__(self, keys: Sequence[tuple], domain: Sequence[str] = None, 
                  expl_text: str = ''):
         """Constructor for GAMSSet
 
         Args:
-            name: Name of the symbol
             keys: Sequence of tuples of strings for the keys
             domain (optional): Sequence of domain set names
             expl_text (optional): Explanatory text
@@ -102,7 +88,7 @@ class GAMSSet(_GAMSNDimSymbol):
             ValueError
         """
 
-        super().__init__(name, keys, domain, expl_text)
+        super().__init__(keys, domain, expl_text)
         self._type = 'Set'
 
     @property
@@ -120,7 +106,7 @@ class GAMSSet(_GAMSNDimSymbol):
 class GAMSScalar(_GAMSSymbol):
     """Class for GAMS Scalars (0-dimensional Parameters)
     """
-    def __init__(self, name: str, value: float, expl_text: str = ''):
+    def __init__(self, value: float, expl_text: str = ''):
         """Class constructor
 
         Args:
@@ -131,7 +117,7 @@ class GAMSScalar(_GAMSSymbol):
             ValueError
         """
 
-        super().__init__(name, expl_text)
+        super().__init__(expl_text)
         self._type = 'Scalar'
         self.dimension = 0
         self._value = float(value)
@@ -147,11 +133,10 @@ class GAMSParameter(_GAMSNDimSymbol):
     """Class for GAMS Parameters
     """
 
-    def __init__(self, name: str, data: Mapping[tuple, float], domain: Sequence[str] = None, expl_text: str = ''):
+    def __init__(self, data: Mapping[tuple, float], domain: Sequence[str] = None, expl_text: str = ''):
         """Constructor for GAMSParameter
 
         Args:
-            name: Name of the symbol
             data: Dictionay of keys and values
             domain (optional): List of domain set names
             expl_text (optional): Explanatory text
@@ -164,7 +149,7 @@ class GAMSParameter(_GAMSNDimSymbol):
         if not isinstance(data, dict):
             raise ValueError("Data must be a dictionary")
         else:
-            super().__init__(name, list(data.keys()), domain, expl_text)
+            super().__init__(list(data.keys()), domain, expl_text)
             self._type = 'Parameter'
             self._data = data
 

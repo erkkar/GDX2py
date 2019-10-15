@@ -12,89 +12,89 @@ from .constants import (SET1, SET1_TEXT,
 
 
 def test_create_set():
-    s = GAMSSet('set1', SET1)
+    s = GAMSSet(SET1)
     assert s.elements == SET1
 
 def test_set_as_list():
-    s = GAMSSet('set1', SET1)
+    s = GAMSSet(SET1)
     assert list(s) == SET1
 
 def test_set_length():
-    s = GAMSSet('set1', SET1)
+    s = GAMSSet(SET1)
     assert len(s) == len(SET1)
 
 def test_create_set_without_domain():
-    s = GAMSSet('set1', SET1)
+    s = GAMSSet(SET1)
     assert s.domain is None
 
 def test_create_set_with_domain():
     domain = ['super']
-    s = GAMSSet('set1', SET1, domain)
+    s = GAMSSet(SET1, domain)
     assert s.domain == domain
 
 def test_create_set_expl_text():
-    s = GAMSSet('set1', SET1, expl_text=SET1_TEXT)
+    s = GAMSSet(SET1, expl_text=SET1_TEXT)
     assert s.expl_text == SET1_TEXT
 
 def test_create_set_dimension():
-    s = GAMSSet('set2', SET2)
+    s = GAMSSet(SET2)
     assert s.dimension == 2
 
 def test_multidim_set_length():
-    s = GAMSSet('set2', SET2)
+    s = GAMSSet(SET2)
     assert len(s) == len(SET2)
 
 def test_create_set_multidim():
-    s = GAMSSet('set2', SET2)
+    s = GAMSSet(SET2)
     assert s.elements == SET2
 
 def test_create_set_multidim_fail():
     with pytest.raises(ValueError):
-        GAMSSet('s', [('a', 'b'), ('c')])
+        GAMSSet([('a', 'b'), ('c')])
 
 def test_create_scalar():
-    pi = GAMSScalar('pi', CONSTANT, expl_text=CONSTANT_TEXT)
-    assert str(pi) == CONSTANT_TEXT
+    constant = GAMSScalar(CONSTANT, expl_text=CONSTANT_TEXT)
+    assert constant.expl_text == CONSTANT_TEXT
     
 def test_scalar_value():
-    pi = GAMSScalar('pi', CONSTANT)
-    assert float(pi) == CONSTANT
+    constant = GAMSScalar(CONSTANT)
+    assert float(constant) == CONSTANT
 
 def test_create_parameter():
-    par = GAMSParameter('par', PAR1, expl_text=PAR1_TEXT)
-    assert str(par) == PAR1_TEXT
+    par = GAMSParameter(PAR1, expl_text=PAR1_TEXT)
+    assert par.expl_text == PAR1_TEXT
 
 def test_parameter_keys():
-    par = GAMSParameter('par', PAR1)
+    par = GAMSParameter(PAR1)
     assert set(par.keys()) == set(PAR1.keys())
 
 def test_parameter_values():
-    par = GAMSParameter('par', PAR1)
+    par = GAMSParameter(PAR1)
     assert set(par.values()) == set(PAR1.values())
 
 def test_parameter_values_get():
-    par = GAMSParameter('par', PAR1)
+    par = GAMSParameter(PAR1)
     key = list(PAR1.keys())[0]
     assert par[key] == PAR1[key]
 
 def test_create_multidim_parameter():
-    par = GAMSParameter('par', PAR2)
+    par = GAMSParameter(PAR2)
     assert par.dimension == 2
 
 def test_multidim_parameter_keys():
-    par = GAMSParameter('par2', PAR2)
+    par = GAMSParameter(PAR2)
     assert set(par.keys()) == set(PAR2.keys())
 
 def test_multidim_parameter_values():
-    par = GAMSParameter('par', PAR2)
+    par = GAMSParameter(PAR2)
     assert set(par.values()) == set(PAR2.values())
 
 def test_multidim_parameter_values_get():
-    par = GAMSParameter('par', PAR2)
+    par = GAMSParameter(PAR2)
     key = list(PAR2.keys())[0]
     assert par[key] == PAR2[key]
 
 def test_parameter_to_dict():
-    par = GAMSParameter('par', PAR1)
+    par = GAMSParameter(PAR1)
     assert dict(par) == PAR1
     

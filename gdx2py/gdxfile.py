@@ -188,7 +188,7 @@ class GdxFile(object):
         elif not isinstance(symbol, _GAMSSymbol):
             raise ValueError("Must provide a GAMS symbol object")
         
-        self._write_symbol(symbol)
+        self._write_symbol(name, symbol)
 
     def _find_symbol(self, name):
         """Find symbol number by name
@@ -432,14 +432,14 @@ class GdxFile(object):
             if gdxcc.gdxSetHasText(self._h, symno):
                 pass # TODO
                 #assoc_texts = self._get_set_assoc_text(values)
-            return GAMSSet(sym, keys, domain)
+            return GAMSSet(keys, domain)
         elif symtype == GMS_DT_PAR:
             if dim == 0:
-                return GAMSScalar(sym, values[0])
+                return GAMSScalar(values[0])
             else:
-                return GAMSParameter(sym, dict(zip(keys, values)))
+                return GAMSParameter(dict(zip(keys, values)))
 
-    def _write_symbol(self, symbol):
+    def _write_symbol(self, name, symbol):
         """Write a Pandas series to a GAMS Set symbol
 
         Parameters
@@ -468,7 +468,7 @@ class GdxFile(object):
 
         # Begin writing to a symbol
         try:
-            self._writestrstart(symbol.name, GMS_DTYPES[symbol._type], 
+            self._writestrstart(name, GMS_DTYPES[symbol._type], 
                                 dims, symbol.expl_text)
         except:  # TODO
             raise
@@ -478,9 +478,9 @@ class GdxFile(object):
             domain = [(d if d is not None else '*') for d in symbol.domain]
         else:
             domain = dims * ['*']
-        ret = gdxcc.gdxSymbolSetDomainX(self._h, self._find_symbol(symbol.name), domain)
+        ret = gdxcc.gdxSymbolSetDomainX(self._h, self._find_symbol(name), domain)
         if not ret:
-            raise RuntimeError("Unable to set domain for symbol '{}'".format(symbol.name))
+            raise RuntimeError("Unable to set domain for symbol '{}'".format(name))
 
         # Init value array
         value_arr = gdxcc.doubleArray(gdxcc.GMS_VAL_MAX)
