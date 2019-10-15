@@ -9,8 +9,6 @@ NOTE: You might want to check out [gdx-pandas](https://github.com/NREL/gdx-panda
 
 - GAMS: version 24.1 or higher
 - Python: 3.6 or higher
-- Numpy: 1.8.1 or higher
-- pandas: 0.17.1 or higher
 - GAMS Data Exchange API (gdxcc): 7.0 or higher
 
 
@@ -18,13 +16,6 @@ NOTE: You might want to check out [gdx-pandas](https://github.com/NREL/gdx-panda
 
 Get GAMS from [https://www.gams.com/download/](https://www.gams.com/download/) 
 and install it to your system. No license is needed for the use of GDX libraries.
-
-
-### Other requirements
-
-Install other requirements using
-
-    pip install -r requirements.txt
 
 
 ## Installation
