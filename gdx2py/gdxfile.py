@@ -402,6 +402,9 @@ class GdxFile(object):
         # Get domain of symbol
         domain = self._get_domain(symno)
 
+        # Get explanatory text
+        expl_text = self._get_expl_text(symno)
+
         # Get length of longest label
         _label_maxlen = gdxcc.gdxSymbIndxMaxLength(self._h, symno)[0]
 
@@ -436,12 +439,12 @@ class GdxFile(object):
 
         # For sets, read associated text and replace as the value
         if symtype == GMS_DT_SET:
-            return GAMSSet(keys, domain, assoc_texts=assoc_texts)
+            return GAMSSet(keys, domain, expl_text=expl_text, assoc_texts=assoc_texts)
         elif symtype == GMS_DT_PAR:
             if dim == 0:
-                return GAMSScalar(values[0])
+                return GAMSScalar(values[0], expl_text=expl_text)
             else:
-                return GAMSParameter(dict(zip(keys, values)))
+                return GAMSParameter(dict(zip(keys, values)), expl_text=expl_text)
 
     def _write_symbol(self, name, symbol):
         """Write a Pandas series to a GAMS Set symbol
