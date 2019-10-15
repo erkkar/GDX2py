@@ -3,7 +3,7 @@
 import pytest
 
 from gdx2py.gams import GAMSSet, GAMSScalar, GAMSParameter
-from .constants import (SET1, SET1_TEXT,
+from .constants import (SET1, SET1_TEXT, SET1_ASSOC_TEXTS,
                         SET2,
                         CONSTANT, CONSTANT_TEXT,
                         PAR1, PAR1_DOMAIN, PAR1_TEXT,
@@ -35,6 +35,14 @@ def test_create_set_with_domain():
 def test_create_set_expl_text():
     s = GAMSSet(SET1, expl_text=SET1_TEXT)
     assert s.expl_text == SET1_TEXT
+
+def test_set_with_associated_texts():
+    s = GAMSSet(SET1, assoc_texts=SET1_ASSOC_TEXTS)
+    assert s.assoc_texts == SET1_ASSOC_TEXTS
+
+def test_set_with_associated_texts_fail():
+    with pytest.raises(ValueError):
+        GAMSSet(SET1, assoc_texts=['alpha'])
 
 def test_create_set_dimension():
     s = GAMSSet(SET2)

@@ -411,6 +411,10 @@ class GdxFile(object):
         # Initialize keys and values arrays
         keys = recs * [tuple()]
         values = recs * [float()]
+        if gdxcc.gdxSetHasText(self._h, symno):
+            assoc_texts = recs * [str()]
+        else:
+            assoc_texts = None
 
         # Read GDX data
         for i in range(recs):
@@ -420,18 +424,19 @@ class GdxFile(object):
             elif dim > 1:
                 keys[i] = tuple(key)
             val = value_arr[GMS_VAL_LEVEL]  # Only take the value level
-            for sv in SPECIAL_VALUES:  # Check special values
-                if math.isclose(val, sv):
-                    val = SPECIAL_VALUES[sv]
-            values[i] = val
+            if symtype == GMS_DT_SET:
+                if assoc_texts is not None:  # Get set element associated texts
+                    assoc_texts[i] = self._get_set_assoc_text(val)
+            elif symtype == GMS_DT_PAR:
+                for sv in SPECIAL_VALUES:  # Check special values
+                    if math.isclose(val, sv):
+                        val = SPECIAL_VALUES[sv]
+                values[i] = float(val)
         gdxcc.gdxDataReadDone(self._h)
 
         # For sets, read associated text and replace as the value
         if symtype == GMS_DT_SET:
-            if gdxcc.gdxSetHasText(self._h, symno):
-                pass # TODO
-                #assoc_texts = self._get_set_assoc_text(values)
-            return GAMSSet(keys, domain)
+            return GAMSSet(keys, domain, assoc_texts=assoc_texts)
         elif symtype == GMS_DT_PAR:
             if dim == 0:
                 return GAMSScalar(values[0])

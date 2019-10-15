@@ -75,16 +75,18 @@ class GAMSSet(_GAMSNDimSymbol):
 
     Attributes:
         elements (list): Set elements
-        expl_text (str): Symbol explanatory text
+        expl_text (str): Set explanatory text
+        assoc_texts (list): Set element associated texts
     """
     def __init__(self, keys: Sequence[tuple], domain: Sequence[str] = None, 
-                 expl_text: str = ''):
+                 expl_text: str = '', assoc_texts: Sequence[str] = None):
         """Constructor for GAMSSet
 
         Args:
             keys: Sequence of tuples of strings for the keys
             domain (optional): Sequence of domain set names
             expl_text (optional): Explanatory text
+            assoc_texts (optional): Set element associated texts
 
         Raises:
             ValueError
@@ -92,10 +94,24 @@ class GAMSSet(_GAMSNDimSymbol):
 
         super().__init__(keys, domain, expl_text)
         self._type = 'Set'
+        self._assoc_texts = None
+        if assoc_texts is not None:
+            try:
+                len_assoc_texts = len(assoc_texts)
+            except TypeError:
+                raise ValueError("Associated texts must be a sequence")
+            if len_assoc_texts != self._size:
+                raise ValueError("Length of associated texts does not match the keys")
+            else:
+                self._assoc_texts = list(assoc_texts)
 
     @property
     def elements(self):
         return self._keys
+
+    @property
+    def assoc_texts(self):
+        return self._assoc_texts
 
     def __iter__(self):
         self._iterator = iter(self._keys)

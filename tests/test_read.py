@@ -5,7 +5,9 @@ import pytest
 from gdx2py.gdxfile import GdxFile
 from gdx2py.gdxfile import EPS_VALUE
 from gdx2py.gams import GAMSSet, GAMSScalar, GAMSParameter
-from .constants import SET1, SET2, CONSTANT, PAR1, PAR2, PAR3
+from .constants import (SET1, SET1_TEXT, SET1_ASSOC_TEXTS,
+                        SET2, CONSTANT, PAR1, PAR2, PAR3
+)
 
 
 @pytest.fixture
@@ -19,8 +21,12 @@ def compare_elements(gdx: GdxFile, symname: str, data: list):
 def compare_values(gdx: GdxFile, symname: str, data: dict):
     return dict(gdx[symname]) == data
 
+
 def test_read_1d_set(example_gdx):
     assert isinstance(example_gdx['set1'], GAMSSet)
+
+def test_read_set_assoc_texts(example_gdx):
+    assert example_gdx['set1'].assoc_texts == SET1_ASSOC_TEXTS
 
 def test_1d_set_elements(example_gdx):
     assert compare_elements(example_gdx, 'set1', SET1)
