@@ -35,3 +35,12 @@ Use the `-e` switch to install in editable mode (for development).
     >>>     gdx['par1'] = GAMSParameter({'a': 1, 'b': 2, 'c':3, 'd': 4}, domain=['set1'])  # Write a parameter with domain
  
 
+<hr>
+<center>
+<table width=500px frame="none">
+<tr>
+<td valign="middle" width=100px>
+<img src=https://europa.eu/european-union/sites/europaeu/files/docs/body/flag_yellow_low.jpg alt="EU emblem" width=100%></td>
+<td valign="middle">This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 774629.</td>
+</table>
+</center>
