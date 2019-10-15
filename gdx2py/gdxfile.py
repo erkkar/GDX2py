@@ -394,7 +394,7 @@ class GdxFile(object):
         """
 
         # Get symbol info
-        ret, sym, dim, symtype = gdxcc.gdxSymbolInfo(self._h, symno)
+        ret, _sym, dim, symtype = gdxcc.gdxSymbolInfo(self._h, symno)
         if not ret:
             warn("Symbol not found!")
             return None
