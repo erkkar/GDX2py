@@ -175,12 +175,12 @@ class GAMSParameter(_GAMSNDimSymbol):
         """
 
         # Check arguments
-        if not isinstance(data, dict):
-            raise ValueError("Data must be a dictionary")
-        else:
+        try:
             super().__init__(data.keys(), domain, expl_text)
-            self._type = 'Parameter'
-            self._data = data
+        except AttributeError:
+            raise ValueError("Data must be a mapping")
+        self._type = 'Parameter'
+        self._data = data
 
     def keys(self):
         return self._data.keys()
