@@ -141,19 +141,10 @@ class GdxFile(object):
         self.close()
 
     def __repr__(self):
-        return "GdxFile('{}', mode='{}')".format(self.filename, self._mode)
+        return f"GdxFile('{self.filename}', mode='{self._mode}')"
 
     def __str__(self):
-        header = "GDX file at '{}'\n\n".format(self.filename)
-        _ret, sym_count, _uel_count = gdxcc.gdxSystemInfo(self._h)
-        line = "{:<4}{:20}{:5}{:3}\n"
-        symbols = line.format('id','name','type','dim')
-        symbols += (4 + 20 + 5 + 3) * '-' + '\n'
-        for i in range(1, sym_count + 1):
-            _ret, sym, dim, symtype = gdxcc.gdxSymbolInfo(self._h, i)
-            symbols += line.format(i, sym, GMS_DTYPES[symtype][0:3], dim)
-
-        return header + symbols
+        return f"GDX file at '{self.filename}'"
 
     def __len__(self):
         ret, sym_count, _uel_cnt = gdxcc.gdxSystemInfo(self._h)

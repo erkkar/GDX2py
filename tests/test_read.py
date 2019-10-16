@@ -24,6 +24,9 @@ def compare_values(gdx: GdxFile, symname: str, data: dict):
     return dict(gdx[symname]) == data
 
 
+def test_gdx_str(example_gdx):
+    assert str(example_gdx) == f"GDX file at '{example_gdx.filename}'"
+
 def test_read_1d_set(example_gdx):
     assert isinstance(example_gdx['set1'], GAMSSet)
 
