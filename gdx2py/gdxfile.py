@@ -10,7 +10,7 @@ import os.path
 import math
 from copy import copy
 from warnings import warn
-from collections.abc import Mapping, Sequence, KeysView
+from collections.abc import Mapping, Sequence, KeysView, ValuesView
 
 from gdxcc import (GMS_VAL_LEVEL, 
                    GMS_DT_SET,
@@ -196,6 +196,18 @@ class GdxFile(object):
             raise ValueError("Could not interpret given data as a GAMS symbol")
         
         self._write_symbol(name, symbol)
+
+    @staticmethod
+    def symrange(sym_count):
+        return range(1, sym_count + 1)  # Skip symbol 0 which is the universal set
+
+    def __iter__(self):
+        self._iterator = iter(GdxFile.symrange(len(self)))
+        return self
+
+    def __next__(self):
+        i = next(self._iterator)
+        return self._get_symname(i), self[i]
 
     def _find_symbol(self, name):
         """Find symbol number by name
@@ -538,8 +550,24 @@ class _GdxKeysView(KeysView):
         return key in self.gdx
 
     def __iter__(self):
-        _ret, sym_count, _uel_count = gdxcc.gdxSystemInfo(self.gdx._h)
-        for i in range(1, sym_count + 1):  # Skip symbol 0 which is the universal set
+        for i in GdxFile.symrange(len(self)):
             yield self.gdx._get_symname(i)
+
+
+class _GdxSymbolsView(ValuesView):
+    """Class for objects retuned by GdxFile.keys()
+    """
+    def __init__(self, gdx):
+        self.gdx = gdx
+
+    def __len__(self):
+        return len(self.gdx)
+
+    def __contains__(self, key): 
+        raise NotImplementedError()  # TODO
+
+    def __iter__(self):
+        for i in GdxFile.symrange(len(self)):
+            yield self.gdx[i]
 
         

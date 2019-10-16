@@ -40,6 +40,11 @@ def test_gdx_keys(example_gdx):
     assert all(sym in keys for sym in SYMLIST)
     assert list(keys) == SYMLIST
 
+def test_iterate_gdx(example_gdx):
+    first_symname, first_sym = next(iter(example_gdx))
+    assert first_symname == 'set1'
+    assert isinstance(first_sym, GAMSSet)
+
 def test_read_1d_set(example_gdx):
     assert isinstance(example_gdx['set1'], GAMSSet)
 
