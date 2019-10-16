@@ -10,6 +10,7 @@ setup(name='GDX2py',
       author='Erkka Rinne',
       author_email='erkka.rinne@vtt.fi',
       description='Read and write GAMS Data eXchange (GDX) files using Python',
+      python_requires='>=3.6',
       install_requires=[
         'gdxcc>=7',
       ],
