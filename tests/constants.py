@@ -8,6 +8,8 @@ file 'data/example.gdx'.
 import sys
 import math
 
+SYMLIST = ['set1', 'set2', 'CONSTANT', 'par1', 'par2', 'par3']
+
 SET1 = ['a', 'b', 'c', 'd']
 SET1_TEXT = "A one-dimensional set"
 SET1_ASSOC_TEXTS = ['alpha', 'beta', 'charlie', 'delta']

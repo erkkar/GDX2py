@@ -10,7 +10,7 @@ import os.path
 import math
 from copy import copy
 from warnings import warn
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, Sequence, KeysView
 
 from gdxcc import (GMS_VAL_LEVEL, 
                    GMS_DT_SET,
@@ -152,6 +152,12 @@ class GdxFile(object):
             return sym_count
         else:
             return 0
+
+    def __contains__(self, symname):
+        return True if self._find_symbol(symname) else False
+
+    def keys(self):
+        return _GdxKeysView(self)
 
     def close(self):
         gdxcc.gdxClose(self._h)
@@ -517,3 +523,23 @@ class GdxFile(object):
                 gdxcc.gdxDataWriteStr(self._h, list(key), value_arr)
 
         gdxcc.gdxDataWriteDone(self._h)
+
+
+class _GdxKeysView(KeysView):
+    """Class for objects retuned by GdxFile.keys()
+    """
+    def __init__(self, gdx):
+        self.gdx = gdx
+
+    def __len__(self):
+        return len(self.gdx)
+
+    def __contains__(self, key): 
+        return key in self.gdx
+
+    def __iter__(self):
+        _ret, sym_count, _uel_count = gdxcc.gdxSystemInfo(self.gdx._h)
+        for i in range(1, sym_count + 1):  # Skip symbol 0 which is the universal set
+            yield self.gdx._get_symname(i)
+
+        

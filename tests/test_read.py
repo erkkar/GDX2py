@@ -8,7 +8,8 @@ from gdx2py.gams import GAMSSet, GAMSScalar, GAMSParameter
 from .constants import (SET1, SET1_TEXT, SET1_ASSOC_TEXTS,
                         SET2, CONSTANT, CONSTANT_TEXT,
                         PAR1, PAR1_TEXT,
-                        PAR2, PAR3
+                        PAR2, PAR3,
+                        SYMLIST
 )
 
 
@@ -26,6 +27,18 @@ def compare_values(gdx: GdxFile, symname: str, data: dict):
 
 def test_gdx_str(example_gdx):
     assert str(example_gdx) == f"GDX file at '{example_gdx.filename}'"
+
+def test_gdx_len(example_gdx):
+    assert len(example_gdx) == len(SYMLIST)
+
+def test_gdx_contains(example_gdx):
+    assert all(sym in example_gdx for sym in SYMLIST)
+
+def test_gdx_keys(example_gdx):
+    keys = example_gdx.keys()
+    assert len(keys) == len(SYMLIST)
+    assert all(sym in keys for sym in SYMLIST)
+    assert list(keys) == SYMLIST
 
 def test_read_1d_set(example_gdx):
     assert isinstance(example_gdx['set1'], GAMSSet)
