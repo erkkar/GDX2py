@@ -98,3 +98,6 @@ def test_read_not_found(example_gdx):
     with pytest.raises(KeyError):
         example_gdx['foobar']
 
+def test_read_par_with_no_domain(example_gdx):
+    assert example_gdx['par3'].domain is None
+

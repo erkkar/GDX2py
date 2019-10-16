@@ -420,7 +420,9 @@ class GdxFile(object):
             return None
 
         # Get domain of symbol
-        domain = self._get_domain(symno)
+        domain = [(d if d !='*' else None) for d in self._get_domain(symno)]
+        if not any(domain):
+            domain = None
 
         # Get explanatory text
         expl_text = self._get_expl_text(symno)
@@ -464,7 +466,7 @@ class GdxFile(object):
             if dim == 0:
                 return GAMSScalar(values[0], expl_text=expl_text)
             else:
-                return GAMSParameter(dict(zip(keys, values)), expl_text=expl_text)
+                return GAMSParameter(dict(zip(keys, values)), domain=domain, expl_text=expl_text)
 
     def _write_symbol(self, name, symbol):
         """Write a Pandas series to a GAMS Set symbol
