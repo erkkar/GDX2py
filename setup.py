@@ -18,4 +18,12 @@ setup(name='GDX2py',
       tests_require=['pytest', 'pytest-datadir'],
       url='https://github.com/ererkka/GDX2py',
       packages=find_packages(exclude=['tests']),
+      classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Topic :: Scientific/Engineering",
+        "Intended Audience :: Developers",
+        "Development Status :: 4 - Beta"
+    ],
 )
