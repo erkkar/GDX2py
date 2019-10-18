@@ -17,5 +17,5 @@ setup(name='GDX2py',
       setup_requires=['pytest-runner'],
       tests_require=['pytest', 'pytest-datadir'],
       url='https://github.com/ererkka/GDX2py',
-      packages=find_packages(),
+      packages=find_packages(exclude=['tests']),
 )
