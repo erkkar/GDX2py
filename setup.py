@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 with open('gdx2py/version.py') as f: exec(f.read())
 
 setup(name='GDX2py',
-      version=__version__,
+      version=__version__,  # pylint: disable=undefined-variable
       author='Erkka Rinne',
       author_email='erkka.rinne@vtt.fi',
       description='Read and write GAMS Data eXchange (GDX) files using Python',
