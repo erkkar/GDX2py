@@ -18,16 +18,16 @@ SET2 = [('a', 'foo'), ('b', 'bar'), ('c', 'baz')]
 SET2_TEXT = "A multidimensional set"
 SET2_DOMAIN = ['set1', None]
 
-CONSTANT = 10
+CONSTANT = 10.0
 CONSTANT_TEXT = "A scalar"
 
-PAR1 = {'a': 1, 'b': 2, 'c':3, 'd': 4}
+PAR1 = {'a': 1.0, 'b': 2.0, 'c':3.0, 'd': 4.0}
 PAR1_TEXT = "A one-dimensional parameter"
 PAR1_DOMAIN = ['set1']
 
-PAR2 = {('a', 'aaa'): 10, 
-        ('b', 'bbb'): 20, 
-        ('c', 'ccc'): 30}
+PAR2 = {('a', 'aaa'): 10.0, 
+        ('b', 'bbb'): 20.0, 
+        ('c', 'ccc'): 30.0}
 PAR2_TEXT = "A multidimensional parameter"
 PAR2_DOMAIN = ['set1', None]
 
