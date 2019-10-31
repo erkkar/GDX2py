@@ -12,11 +12,8 @@ from copy import copy
 from warnings import warn
 from collections.abc import Mapping, Sequence, KeysView, ValuesView
 
-from gdxcc import (GMS_VAL_LEVEL, 
-                   GMS_DT_SET,
-                   GMS_DT_PAR,
-                  )
-import gdxcc 
+from gdxcc import GMS_VAL_LEVEL, GMS_DT_SET, GMS_DT_PAR
+import gdxcc
 
 from .gams import _GAMSSymbol, GAMSSet, GAMSScalar, GAMSParameter
 
@@ -27,7 +24,7 @@ GMS_DTYPES = {
     'Scalar': GMS_DT_PAR,
     #'Variable': GMS_DT_VAR,
     #'Equation': GMS_DT_EQU,
-    #'Alias': GMS_DT_ALIAS: 
+    #'Alias': GMS_DT_ALIAS:
 }
 
 # Define data types
@@ -41,11 +38,11 @@ EPS_VALUE = sys.float_info.min
 # Python version of GAMS special values
 SPECIAL_VALUES = {
     gdxcc.GMS_SV_UNDEF: math.nan,
-    gdxcc.GMS_SV_NA   : math.nan,
-    gdxcc.GMS_SV_PINF : math.inf,
-    gdxcc.GMS_SV_MINF : -math.inf,
-    gdxcc.GMS_SV_EPS  : EPS_VALUE,
-    gdxcc.GMS_SV_ACR  : math.nan,
+    gdxcc.GMS_SV_NA: math.nan,
+    gdxcc.GMS_SV_PINF: math.inf,
+    gdxcc.GMS_SV_MINF: -math.inf,
+    gdxcc.GMS_SV_EPS: EPS_VALUE,
+    gdxcc.GMS_SV_ACR: math.nan,
     gdxcc.GMS_SV_NAINT: math.nan,
 }
 
@@ -126,9 +123,9 @@ class GdxFile(object):
         self._UEL_map = {}
 
         # TODO
-        #self._get_uel_string = np.vectorize(self._get_uel_string,
+        # self._get_uel_string = np.vectorize(self._get_uel_string,
         #                                    otypes=[GDX_DTYPE_LABEL])
-        #self._get_set_assoc_text = np.vectorize(self._get_set_assoc_text,
+        # self._get_set_assoc_text = np.vectorize(self._get_set_assoc_text,
         #                                        otypes=[GDX_DTYPE_TEXT])
 
     def __del__(self):
@@ -180,9 +177,10 @@ class GdxFile(object):
         if self._mode == 'r':
             raise IOError("Cannot write in mode '{}'".format(self._mode))
         elif self._find_symbol(name) is not None:
-            raise NotImplementedError("Cannot replace "
-                                      "existing symbol '{}'".format(name))
-        
+            raise NotImplementedError(
+                "Cannot replace " "existing symbol '{}'".format(name)
+            )
+
         # Try for a GAMSSymbol and different Python types
         if isinstance(data, _GAMSSymbol):
             symbol = data
@@ -194,7 +192,7 @@ class GdxFile(object):
             symbol = GAMSScalar(data)
         else:
             raise ValueError("Could not interpret given data as a GAMS symbol")
-        
+
         self._write_symbol(name, symbol)
 
     @staticmethod
@@ -320,7 +318,7 @@ class GdxFile(object):
             return None
 
         # Get domain of symbol
-        domain = [(d if d !='*' else None) for d in self._get_domain(symno)]
+        domain = [(d if d != '*' else None) for d in self._get_domain(symno)]
         if not any(domain):
             domain = None
 
@@ -333,8 +331,9 @@ class GdxFile(object):
         # Start reading symbol
         ret, recs = gdxcc.gdxDataReadStrStart(self._h, symno)
         if not ret:
-            raise Exception(gdxcc.gdxErrorStr(self._h, 
-                                              gdxcc.gdxGetLastError(self._h))[1])
+            raise Exception(
+                gdxcc.gdxErrorStr(self._h, gdxcc.gdxGetLastError(self._h))[1]
+            )
 
         # Initialize keys and values arrays
         keys = recs * [tuple()]
@@ -350,19 +349,25 @@ class GdxFile(object):
         if symtype == GMS_DT_SET and assoc_texts:
             for i in range(recs):
                 _ret, key_arr, value_arr, _afdim = gdxcc.gdxDataReadStr(self._h)
-                keys[i] = key_arr[0] if dim == 1 else tuple(key_arr)  # Squeze out dimension of 1-dim keys
+                keys[i] = (
+                    key_arr[0] if dim == 1 else tuple(key_arr)
+                )  # Squeze out dimension of 1-dim keys
                 assoc_texts[i] = self._get_set_assoc_text(value_arr[GMS_VAL_LEVEL])
         elif symtype == GMS_DT_SET and not assoc_texts:
             for i in range(recs):
                 _ret, key_arr, _value_arr, _afdim = gdxcc.gdxDataReadStr(self._h)
-                keys[i] = key_arr[0] if dim == 1 else tuple(key_arr)  # Squeze out dimension of 1-dim keys
+                keys[i] = (
+                    key_arr[0] if dim == 1 else tuple(key_arr)
+                )  # Squeze out dimension of 1-dim keys
         elif symtype == GMS_DT_PAR:
             for i in range(recs):
                 _ret, key_arr, value_arr, _afdim = gdxcc.gdxDataReadStr(self._h)
-                keys[i] = key_arr[0] if dim == 1 else tuple(key_arr)  # Squeze out dimension of 1-dim keys
+                keys[i] = (
+                    key_arr[0] if dim == 1 else tuple(key_arr)
+                )  # Squeze out dimension of 1-dim keys
                 val = value_arr[GMS_VAL_LEVEL]
                 values[i] = SPECIAL_VALUES.get(val, val)
-        
+
         # Done reading
         gdxcc.gdxDataReadDone(self._h)
 
@@ -373,7 +378,9 @@ class GdxFile(object):
             if dim == 0:
                 return GAMSScalar(values[0], expl_text=expl_text)
             else:
-                return GAMSParameter(dict(zip(keys, values)), domain=domain, expl_text=expl_text)
+                return GAMSParameter(
+                    dict(zip(keys, values)), domain=domain, expl_text=expl_text
+                )
 
     def _write_symbol(self, symname, symbol):
         """Write a Pandas series to a GAMS Set symbol
@@ -400,12 +407,18 @@ class GdxFile(object):
         set_has_text = False  # TODO
 
         # Begin writing to a symbol
-        ret = gdxcc.gdxDataWriteStrStart(self._h, symname, symbol.expl_text,
-                                         dim, GMS_DTYPES[symbol._type], 
-                                         GMS_USERINFO_SET_PARAMETER)
+        ret = gdxcc.gdxDataWriteStrStart(
+            self._h,
+            symname,
+            symbol.expl_text,
+            dim,
+            GMS_DTYPES[symbol._type],
+            GMS_USERINFO_SET_PARAMETER,
+        )
         if not ret:
-            raise RuntimeError(gdxcc.gdxErrorStr(self._h, 
-                                                 gdxcc.gdxGetLastError(self._h))[1])
+            raise RuntimeError(
+                gdxcc.gdxErrorStr(self._h, gdxcc.gdxGetLastError(self._h))[1]
+            )
 
         # Define domain
         if symbol.domain is not None:
@@ -447,13 +460,14 @@ class GdxFile(object):
 class _GdxKeysView(KeysView):
     """Class for objects retuned by GdxFile.keys()
     """
+
     def __init__(self, gdx):
         self.gdx = gdx
 
     def __len__(self):
         return len(self.gdx)
 
-    def __contains__(self, key): 
+    def __contains__(self, key):
         return key in self.gdx
 
     def __iter__(self):
@@ -464,17 +478,16 @@ class _GdxKeysView(KeysView):
 class _GdxSymbolsView(ValuesView):
     """Class for objects retuned by GdxFile.keys()
     """
+
     def __init__(self, gdx):
         self.gdx = gdx
 
     def __len__(self):
         return len(self.gdx)
 
-    def __contains__(self, key): 
+    def __contains__(self, key):
         raise NotImplementedError()  # TODO
 
     def __iter__(self):
         for i in GdxFile.symrange(len(self)):
             yield self.gdx[i]
-
-        

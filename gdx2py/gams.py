@@ -9,6 +9,7 @@ class _GAMSSymbol(object):
     Attributes:
         expl_text (str): Symbol explanatory text
     """
+
     def __init__(self, expl_text: str):
         """Class constructor
 
@@ -24,6 +25,7 @@ class _GAMSSymbol(object):
 class _GAMSNDimSymbol(_GAMSSymbol):
     """Abstarct class for N-dimensional GAMS symbols
     """
+
     def __init__(self, keys: Sequence[tuple], domain: Sequence[str], expl_text: str):
         """Constructor for GAMSNDimSymbol
 
@@ -78,8 +80,14 @@ class GAMSSet(_GAMSNDimSymbol):
         expl_text (str): Set explanatory text
         assoc_texts (list): Set element associated texts
     """
-    def __init__(self, keys: Sequence[tuple], domain: Sequence[str] = None, 
-                 expl_text: str = '', assoc_texts: Sequence[str] = None):
+
+    def __init__(
+        self,
+        keys: Sequence[tuple],
+        domain: Sequence[str] = None,
+        expl_text: str = '',
+        assoc_texts: Sequence[str] = None,
+    ):
         """Constructor for GAMSSet
 
         Args:
@@ -127,6 +135,7 @@ class GAMSScalar(_GAMSSymbol):
     Attributes:
         expl_text (str): Symbol explanatory text
     """
+
     def __init__(self, value: float, expl_text: str = ''):
         """Class constructor
 
@@ -145,7 +154,7 @@ class GAMSScalar(_GAMSSymbol):
 
     def __float__(self):
         return self._value
-    
+
     def __int__(self):
         return int(self._value)
 
@@ -162,7 +171,12 @@ class GAMSParameter(_GAMSNDimSymbol):
         values: Return a view to the symbol's values
     """
 
-    def __init__(self, data: Mapping[tuple, float], domain: Sequence[str] = None, expl_text: str = ''):
+    def __init__(
+        self,
+        data: Mapping[tuple, float],
+        domain: Sequence[str] = None,
+        expl_text: str = '',
+    ):
         """Constructor for GAMSParameter
 
         Args:
@@ -184,13 +198,13 @@ class GAMSParameter(_GAMSNDimSymbol):
 
     def keys(self):
         return self._data.keys()
-    
+
     def values(self):
         return self._data.values()
 
     def __getitem__(self, key):
         return self._data[key]
-    
+
     def __iter__(self):
         self._iterator = iter(self._data.items())
         return self
