@@ -202,7 +202,7 @@ class GAMSParameter(_GAMSNDimSymbol):
     def values(self):
         try:
             return self._data.values()
-        except TypeError:  # Support self.data being pandas.Series
+        except TypeError:  # Support self.data being a pandas.Series
             return self._data.values
 
     def __getitem__(self, key):
@@ -224,4 +224,4 @@ class GAMSParameter(_GAMSNDimSymbol):
                 "This feature needs pandas package. "
                 "Please use pip or conda to install pandas"
             )
-        return pd.Series(dict(self), name=self.expl_text)
+        return pd.Series(iter(self.values()), self.keys(), name=self.expl_text)
