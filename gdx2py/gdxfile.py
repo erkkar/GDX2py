@@ -299,110 +299,6 @@ class GdxFile(object):
         else:
             return None
 
-    def _readstrstart(self, symno):
-        """Start string reading at given symbol
-
-        Parameters
-        ----------
-        symno : int
-            Symbol number
-
-        Returns
-        -------
-        rec : int
-            Number of records available
-
-        Raises
-        ------
-        Exception
-        """
-        ret, recs = gdxcc.gdxDataReadStrStart(self._h, symno)
-        if not ret:
-            raise Exception(gdxcc.gdxErrorStr(self._h, 
-                                              gdxcc.gdxGetLastError(self._h))[1])
-        else:
-            return recs
-
-    def _readrawstart(self, symno):
-        """Start raw mode reading at given symbol
-
-        Parameters
-        ----------
-        symno : int
-            Symbol number
-
-        Returns
-        -------
-        rec : int
-            Number of records available
-
-        Raises
-        ------
-        Exception
-        """
-        ret, recs = gdxcc.gdxDataReadRawStart(self._h, symno)
-        if not ret:
-            raise Exception(gdxcc.gdxErrorStr(self._h, 
-                                              gdxcc.gdxGetLastError(self._h))[1])
-        else:
-            return recs
-
-    def _writestrstart(self, symname, symtype, dim, expl_text = ""):
-        """Start writing a symbol using strings
-
-        Parameters
-        ----------
-        symname : str
-            Symbol name
-        symtype : str
-            Type of the symbol
-        dim : int
-            Dimension of the symbol
-        expl_text : str
-            Symbol explanatory text
-
-        Raises
-        ------
-        Exception
-        """
-
-        ret = gdxcc.gdxDataWriteStrStart(self._h, symname, expl_text,
-                                         dim, symtype, GMS_USERINFO_SET_PARAMETER)
-        if not ret:
-            raise Exception(gdxcc.gdxErrorStr(self._h, 
-                            gdxcc.gdxGetLastError(self._h))[1])
-        else:
-            return None
-
-    def _writerawstart(self, symname, symtype, dim, expl_text = ""):
-        """Start writing a symbol in raw mode
-
-        Parameters
-        ----------
-        symname : str
-            Symbol name
-        symtype : str
-            Type of the symbol
-        dim : int
-            Dimension of the symbol
-        expl_text : str
-            Symbol explanatory text
-
-
-        Raises
-        ------
-        Exception
-        """
-
-        ret = gdxcc.gdxDataWriteRawStart(self._h, symname, expl_text,
-                                         dim, symtype, GMS_USERINFO_SET_PARAMETER)
-        if not ret:
-            raise Exception(gdxcc.gdxErrorStr(self._h, 
-                            gdxcc.gdxGetLastError(self._h))[1])
-        else:
-            return None
-
-
     def _read_symbol(self, symno: int):
         """Read a GAMS symbol as a Pandas Series object
 
@@ -410,6 +306,10 @@ class GdxFile(object):
         ----------
         symtype : int
             Symbol number
+
+        Raises
+        ------
+        RuntimeError
 
         """
 
@@ -431,7 +331,10 @@ class GdxFile(object):
         _label_maxlen = gdxcc.gdxSymbIndxMaxLength(self._h, symno)[0]
 
         # Start reading symbol
-        recs = self._readstrstart(symno)
+        ret, recs = gdxcc.gdxDataReadStrStart(self._h, symno)
+        if not ret:
+            raise Exception(gdxcc.gdxErrorStr(self._h, 
+                                              gdxcc.gdxGetLastError(self._h))[1])
 
         # Initialize keys and values arrays
         keys = recs * [tuple()]
@@ -442,24 +345,28 @@ class GdxFile(object):
             assoc_texts = None
 
         # Read GDX data
-        for i in range(recs):
-            ret, key, value_arr, _afdim = gdxcc.gdxDataReadStr(self._h)
-            if dim == 1:  # Squeze out dimension of 1-dim keys
-                keys[i] = key[0]
-            elif dim > 1:
-                keys[i] = tuple(key)
-            val = value_arr[GMS_VAL_LEVEL]  # Only take the value level
-            if symtype == GMS_DT_SET:
-                if assoc_texts is not None:  # Get set element associated texts
-                    assoc_texts[i] = self._get_set_assoc_text(val)
-            elif symtype == GMS_DT_PAR:
-                for sv in SPECIAL_VALUES:  # Check special values
-                    if math.isclose(val, sv):
-                        val = SPECIAL_VALUES[sv]
-                values[i] = float(val)
+        # Code inside the loop is as small as possible for performance,
+        # so the if statements are outside.
+        if symtype == GMS_DT_SET and assoc_texts:
+            for i in range(recs):
+                _ret, key_arr, value_arr, _afdim = gdxcc.gdxDataReadStr(self._h)
+                keys[i] = key_arr[0] if dim == 1 else tuple(key_arr)  # Squeze out dimension of 1-dim keys
+                assoc_texts[i] = self._get_set_assoc_text(value_arr[GMS_VAL_LEVEL])
+        elif symtype == GMS_DT_SET and not assoc_texts:
+            for i in range(recs):
+                _ret, key_arr, _value_arr, _afdim = gdxcc.gdxDataReadStr(self._h)
+                keys[i] = key_arr[0] if dim == 1 else tuple(key_arr)  # Squeze out dimension of 1-dim keys
+        elif symtype == GMS_DT_PAR:
+            for i in range(recs):
+                _ret, key_arr, value_arr, _afdim = gdxcc.gdxDataReadStr(self._h)
+                keys[i] = key_arr[0] if dim == 1 else tuple(key_arr)  # Squeze out dimension of 1-dim keys
+                val = value_arr[GMS_VAL_LEVEL]
+                values[i] = SPECIAL_VALUES.get(val, val)
+        
+        # Done reading
         gdxcc.gdxDataReadDone(self._h)
 
-        # For sets, read associated text and replace as the value
+        # Construct GAMS symbols and return
         if symtype == GMS_DT_SET:
             return GAMSSet(keys, domain, expl_text=expl_text, assoc_texts=assoc_texts)
         elif symtype == GMS_DT_PAR:
@@ -468,7 +375,7 @@ class GdxFile(object):
             else:
                 return GAMSParameter(dict(zip(keys, values)), domain=domain, expl_text=expl_text)
 
-    def _write_symbol(self, name, symbol):
+    def _write_symbol(self, symname, symbol):
         """Write a Pandas series to a GAMS Set symbol
 
         Parameters
@@ -480,13 +387,10 @@ class GdxFile(object):
         Raises
         ------
         RuntimeError
-            Error registering set associated name to string table.
-        Exception
-            Other errors
         """
 
         # Get number of dimensions
-        dims = symbol.dimension
+        dim = symbol.dimension
 
         try:
             recs = len(symbol)
@@ -496,24 +400,25 @@ class GdxFile(object):
         set_has_text = False  # TODO
 
         # Begin writing to a symbol
-        try:
-            self._writestrstart(name, GMS_DTYPES[symbol._type], 
-                                dims, symbol.expl_text)
-        except:  # TODO
-            raise
+        ret = gdxcc.gdxDataWriteStrStart(self._h, symname, symbol.expl_text,
+                                         dim, GMS_DTYPES[symbol._type], 
+                                         GMS_USERINFO_SET_PARAMETER)
+        if not ret:
+            raise RuntimeError(gdxcc.gdxErrorStr(self._h, 
+                                                 gdxcc.gdxGetLastError(self._h))[1])
 
         # Define domain
         if symbol.domain is not None:
             domain = [(d if d is not None else '*') for d in symbol.domain]
         else:
-            domain = dims * ['*']
-        ret = gdxcc.gdxSymbolSetDomainX(self._h, self._find_symbol(name), domain)
+            domain = dim * ['*']
+        ret = gdxcc.gdxSymbolSetDomainX(self._h, self._find_symbol(symname), domain)
         if not ret:
-            raise RuntimeError("Unable to set domain for symbol '{}'".format(name))
+            raise RuntimeError("Unable to set domain for symbol '{}'".format(symname))
 
         # Init value array
         value_arr = gdxcc.doubleArray(gdxcc.GMS_VAL_MAX)
-        if dims == 0:  # It’s a scalar
+        if dim == 0:  # It’s a scalar
             value_arr[GMS_VAL_LEVEL] = float(symbol)
             gdxcc.gdxDataWriteStr(self._h, list(), value_arr)
         elif isinstance(symbol, GAMSSet):
