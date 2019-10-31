@@ -200,7 +200,10 @@ class GAMSParameter(_GAMSNDimSymbol):
         return self._data.keys()
 
     def values(self):
-        return self._data.values()
+        try:
+            return self._data.values()
+        except TypeError:  # Support self.data being pandas.Series
+            return self._data.values
 
     def __getitem__(self, key):
         return self._data[key]
@@ -212,3 +215,13 @@ class GAMSParameter(_GAMSNDimSymbol):
     def __next__(self):
         key, val = next(self._iterator)
         return key, float(val)
+
+    def to_pandas(self):
+        try:
+            import pandas as pd
+        except ImportError:
+            raise ImportError(
+                "This feature needs pandas package. "
+                "Please use pip or conda to install pandas"
+            )
+        return pd.Series(dict(self), name=self.expl_text)
