@@ -44,7 +44,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # Settings for Sphinx AutoAPI
 autoapi_dirs = ['../gdx2py']  # package(s) to be documented
-autoapi_ignore = ['*/__init__.py', '*/version.py']  # ignored modules
+autoapi_ignore = ['*/gdx2py/version.py']  # ignored modules
 autoapi_python_class_content = (
     'both'
 )  # Which docstring to insert into the content of a class.
