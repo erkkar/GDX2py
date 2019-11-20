@@ -22,6 +22,7 @@ GMS_DTYPES = {
     'Set': GMS_DT_SET,
     'Parameter': GMS_DT_PAR,
     'Scalar': GMS_DT_PAR,
+    # Not used at the moments
     #'Variable': GMS_DT_VAR,
     #'Equation': GMS_DT_EQU,
     #'Alias': GMS_DT_ALIAS:
@@ -53,40 +54,27 @@ class GdxFile(object):
     """Class for working with a gdx file
 
     Use subscripting (gdx_object['<symbolname>']) to get/set a GAMS set or
-    parameter symbol as a Pandas Series object. The (MultiLevel) index of
-    the series gives the set element names. For a GAMS set, the values are
-    associated text labels.
+    parameter symbol. 
 
-    Parameters
-    ----------
-    name : str
-        Gdx file name
-    mode : str
-        File open mode: 'r' for reading, 'w' for writing,
-        'w+' for appending (replaces existing symbol)
-    gams_dir : str, optional
-        Location of GAMS installation directory
-
-    Attributes
-    ----------
-    filename : str
-        Absolute filename
-
-    Raises
-    ------
-    RuntimeError
-        Unable to load gdx library, invalid mode
-    FileNotFoundError
-        Input file not found
-    ValueError
-        Unsupported mode
-    OSError
-        Unable to read/write file
-    Exception
-        Other errors
+    Attributes: 
+        filename (str): Absolute filename
     """
 
-    def __init__(self, filename, mode='r', gams_dir=None):
+    def __init__(self, filename: str, mode: str = 'r', gams_dir: str = None):
+        """Constructor for GdxFile
+        
+        Args:
+            filename: str
+            mode: File open mode: 'r' for reading, 'w' for writing, 'w+' for appending (replaces existing symbol)
+            gams_dir (optional): Location of GAMS installation directory
+
+        Raises:
+            RuntimeError: Unable to load gdx library, invalid mode
+            FileNotFoundError: Input file not found
+            ValueError: Unsupported mode
+            OSError: Unable to read/write file
+            Exception: Other errors
+        """
 
         self._h = gdxcc.new_gdxHandle_tp()  # Create a gdx handle
         if gams_dir is None:
@@ -207,16 +195,11 @@ class GdxFile(object):
         i = next(self._iterator)
         return self._get_symname(i), self[i]
 
-    def _find_symbol(self, name):
+    def _find_symbol(self, name: str) -> int:
         """Find symbol number by name
 
-        Parameters
-        ----------
-        name : str
-
-        Returns
-        -------
-        symno : int
+        Args:
+            name: Symbol name
         """
         ret, symno = gdxcc.gdxFindSymbol(self._h, name)
         if ret > 0:
@@ -300,15 +283,11 @@ class GdxFile(object):
     def _read_symbol(self, symno: int):
         """Read a GAMS symbol as a Pandas Series object
 
-        Parameters
-        ----------
-        symtype : int
-            Symbol number
+        Args:
+            symno: Symbol number
 
-        Raises
-        ------
-        RuntimeError
-
+        Raises:
+            RuntimeError
         """
 
         # Get symbol info
@@ -382,18 +361,14 @@ class GdxFile(object):
                     dict(zip(keys, values)), domain=domain, expl_text=expl_text
                 )
 
-    def _write_symbol(self, symname, symbol):
+    def _write_symbol(self, symname: str, symbol: _GAMSSymbol):
         """Write a Pandas series to a GAMS Set symbol
 
-        Parameters
-        ----------
-        symbol : _GAMSSymbol
-            GAMS symbol object
-    
+        Args:
+            symbol: GAMS symbol object
 
-        Raises
-        ------
-        RuntimeError
+        Raises:
+            RuntimeError
         """
 
         # Get number of dimensions
