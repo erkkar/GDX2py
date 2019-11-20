@@ -10,7 +10,7 @@ Welcome to GDX2py's documentation!
 files using built-in data types list and dictionary.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
 
