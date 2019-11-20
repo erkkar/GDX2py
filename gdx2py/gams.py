@@ -1,5 +1,7 @@
 """Module contains classes for handling GAMS symbols"""
 
+__author__ = "Erkka Rinne"
+
 from typing import Sequence, Mapping
 
 
