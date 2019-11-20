@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+"""Module for working with GAMS GDX files
 """
-Created on Tue Nov 17 13:29:45 2015
 
-@author: ererkka
-"""
+__author__ = "Erkka Rinne"
+
 
 import sys
 import os.path
