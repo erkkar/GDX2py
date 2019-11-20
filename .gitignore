@@ -6,3 +6,4 @@ dist/
 .vscode/
 .pytest_cache/
 .eggs/
+docs/_build/
