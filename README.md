@@ -21,9 +21,7 @@ and install it to your system. No license is needed for the use of GDX libraries
 
 Install with
 
-    pip install [-e] git+https://github.com/ererkka/GDX2py
-    
-Use the `-e` switch to install in editable mode (for development).
+    pip install gdx2py
 
 
 ## Usage
