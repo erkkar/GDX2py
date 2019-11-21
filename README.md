@@ -1,5 +1,7 @@
 # GDX2py
 
+[![Documentation Status](https://readthedocs.org/projects/gdx2py/badge/?version=latest)](https://gdx2py.readthedocs.io/en/latest/?badge=latest)
+
 Read and write GAMS Data eXchange (GDX) files using Python.  
 
 ## Requirements
@@ -30,8 +32,6 @@ Use the `-e` switch to install in editable mode (for development).
     >>> with GdxFile('/path/to/gdx/file.gdx', mode='w') as gdx:
     >>>     gdx['set1'] = ['a', 'b', 'c']  # Write a simple set
     >>>     set1 = gdx['set1']  # Read a symbol
-    >>>     list(set1)
-    ['a', 'b', 'c']
     >>>     # Write a 2-dimensional set
     >>>     gdx['set2'] = [('a', 'foo'), ('b', 'bar'), ('c', 'baz')]
     >>>     # Write a scalar with explanatory text
@@ -40,6 +40,10 @@ Use the `-e` switch to install in editable mode (for development).
     >>>     gdx['par1'] = GAMSParameter({'a': 1, 'b': 2,  
                                          'c': 3, 'd': 4 }, 
                                         domain=['set1'])  
+
+## Comparison to similar packages
+
+Compared to other packages like [PyGDX](https://github.com/khaeru/py-gdx), [gdx-pandas](https://github.com/NREL/gdx-pandas), [gdxtools](https://github.com/boxblox/gdxtools) and [gdxpy](https://github.com/jackjackk/gdxpy), *GDX2py* relies only on the Python standard library and the low-level GDX API `gdxcc` package which is available on PyPI.
  
 
 <hr>
