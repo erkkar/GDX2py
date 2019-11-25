@@ -94,7 +94,7 @@ class GAMSSet(_GAMSNDimSymbol):
 
         Args:
             keys: Sequence of tuples of strings for the keys
-            domain (optional): Sequence of domain set names
+            domain (optional): Sequence of domain set names, use `None` for the universal set
             expl_text (optional): Explanatory text
             assoc_texts (optional): Set element associated texts
 
@@ -183,7 +183,7 @@ class GAMSParameter(_GAMSNDimSymbol):
 
         Args:
             data: Dictionay of keys and values
-            domain (optional): List of domain set names
+            domain (optional): List of domain set names, use `None` for the universal set
             expl_text (optional): Explanatory text
 
         Raises:
