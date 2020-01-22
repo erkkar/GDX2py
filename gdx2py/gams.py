@@ -57,8 +57,10 @@ class _GAMSNDimSymbol(_GAMSSymbol):
                 raise ValueError("Check consistency of the keys argument")
             else:
                 self.dimension = dimension
-        else:
+        elif first_key is not None:
             self.dimension = 1
+        else:
+            self.dimension = None
 
         # Store keys
         self._keys = list(keys)
@@ -66,12 +68,16 @@ class _GAMSNDimSymbol(_GAMSSymbol):
 
         # Check domain length
         if domain:
-            try:
-                if len(domain) != self.dimension:
-                    raise ValueError("Domain is inconsistent with the given values")
-            except TypeError:
-                raise ValueError("Domain must be a sequence")
-            self.domain = domain
+            if self.dimension is not None:
+                try:
+                    if len(domain) != self.dimension:
+                        raise ValueError("Domain is inconsistent with the given values")
+                except TypeError:
+                    raise ValueError("Domain must be a sequence")
+                else:
+                    self.domain = domain
+            else:
+                self.dimension = len(domain)
 
     def __len__(self):
         return self._size
