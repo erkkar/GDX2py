@@ -47,6 +47,9 @@ class _GAMSNDimSymbol(_GAMSSymbol):
             first_key = next(iter(keys))
         except TypeError:
             raise ValueError("Keys must be a sequence")
+        except StopIteration:  # In case no data was given
+            keys = list()
+            first_key = None
         if isinstance(first_key, tuple):
             dimension = len(first_key)
             # Check consistency of the keys
