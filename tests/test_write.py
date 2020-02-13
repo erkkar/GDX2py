@@ -80,3 +80,10 @@ def test_write_set_with_domain(tmp_path):
     with GdxFile(filepath, mode='r') as gdx:
         assert gdx['set2'].domain == SET2_DOMAIN
 
+
+def test_write_empty(tmp_path):
+    # filepath = tmp_path / 'test.gdx'
+    filepath = 'c:/var/test.gdx'
+    with GdxFile(filepath, mode='w') as gdx:
+        gdx['set1'] = GAMSSet(list())
+        gdx['par1'] = GAMSParameter(dict())

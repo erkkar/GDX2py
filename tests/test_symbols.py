@@ -106,3 +106,10 @@ def test_parameter_to_dict():
     par = GAMSParameter(PAR1)
     assert dict(par) == PAR1
     
+def test_empty_set():
+    empty_set = GAMSSet(list())
+    assert not list(empty_set)
+
+def test_empty_parameter():
+    empty_par = GAMSParameter(dict())
+    assert not dict(empty_par)

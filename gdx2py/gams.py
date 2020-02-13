@@ -79,6 +79,10 @@ class _GAMSNDimSymbol(_GAMSSymbol):
             else:
                 self.dimension = len(domain)
 
+        # Fallback to one-dimensional symbol if no other info available
+        if self.dimension is None:
+            self.dimension = 1
+
     def __len__(self):
         return self._size
 
