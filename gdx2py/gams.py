@@ -66,18 +66,20 @@ class _GAMSNDimSymbol(_GAMSSymbol):
         self._keys = list(keys)
         self._size = len(keys)
 
-        # Check domain length
+        # Process domain information if given
         if domain:
+            # Check that the given domain matches the dimension of the symbol
             if self.dimension is not None:
                 try:
                     if len(domain) != self.dimension:
                         raise ValueError("Domain is inconsistent with the given values")
                 except TypeError:
                     raise ValueError("Domain must be a sequence")
-                else:
-                    self.domain = domain
             else:
+                # Interpret dimension from the domain
                 self.dimension = len(domain)
+            # Save the domain information
+            self.domain = domain
 
         # Fallback to one-dimensional symbol if no other info available
         if self.dimension is None:
