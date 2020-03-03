@@ -82,8 +82,7 @@ def test_write_set_with_domain(tmp_path):
 
 
 def test_write_empty(tmp_path):
-    # filepath = tmp_path / 'test.gdx'
-    filepath = 'c:/var/test.gdx'
+    filepath = tmp_path / 'test.gdx'
     with GdxFile(filepath, mode='w') as gdx:
         gdx['set1'] = GAMSSet(list())
         gdx['par1'] = GAMSParameter(dict())
