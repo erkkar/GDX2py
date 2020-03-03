@@ -113,3 +113,15 @@ def test_empty_set():
 def test_empty_parameter():
     empty_par = GAMSParameter(dict())
     assert not dict(empty_par)
+
+
+def test_interpret_dimensiom_from_domain():
+    domain = ['set1', 'set1']
+    empty_set = GAMSSet(list(), domain=domain)
+    assert empty_set.dimension == len(domain)
+
+
+def test_empty_symbol_with_domain():
+    domain = ['set1', 'set1']
+    empty_set = GAMSSet(list(), domain=domain)
+    assert empty_set.domain == domain
