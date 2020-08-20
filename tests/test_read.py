@@ -101,3 +101,14 @@ def test_read_not_found(example_gdx):
 def test_read_par_with_no_domain(example_gdx):
     assert example_gdx['par3'].domain is None
 
+
+def test_keys(example_gdx):
+    assert set(example_gdx.keys()) == {
+        'set1',
+        'set2',
+        'CONSTANT',
+        'par1',
+        'par2',
+        'par3',
+    }
+
