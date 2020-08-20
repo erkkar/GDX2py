@@ -437,10 +437,8 @@ class _GdxKeysView(KeysView):
     """
 
     def __init__(self, gdx):
+        super().__init__(gdx)
         self.gdx = gdx
-
-    def __len__(self):
-        return len(self.gdx)
 
     def __contains__(self, key):
         return key in self.gdx
@@ -451,14 +449,12 @@ class _GdxKeysView(KeysView):
 
 
 class _GdxSymbolsView(ValuesView):
-    """Class for objects retuned by GdxFile.keys()
+    """Class for objects retuned by GdxFile.values()
     """
 
     def __init__(self, gdx):
+        super().__init__(gdx)
         self.gdx = gdx
-
-    def __len__(self):
-        return len(self.gdx)
 
     def __contains__(self, key):
         raise NotImplementedError()  # TODO
