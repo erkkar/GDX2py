@@ -241,4 +241,12 @@ class GAMSParameter(_GAMSNDimSymbol):
                 "This feature needs pandas package. "
                 "Please use pip or conda to install pandas"
             )
-        return pd.Series(iter(self.values()), self.keys(), name=self.expl_text)
+        df = pd.Series(iter(self.values()), self.keys(), name=self.expl_text)
+        if self.domain:
+            if isinstance(df.index, pd.MultiIndex):
+                df.index.names = self.domain
+            else:
+                df.index.name = self.domain[0]
+
+        return df
+
