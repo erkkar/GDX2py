@@ -8,7 +8,6 @@ Read and write GAMS Data eXchange (GDX) files using Python.
 
 - GAMS: version 24.1 or higher
 - Python: 3.6 or higher
-- GAMS Data Exchange API (gdxcc): 7.0 or higher
 
 
 ### Installing GAMS
