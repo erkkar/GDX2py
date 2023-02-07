@@ -2,4 +2,4 @@
 
 from .version import __version__
 from .gdxfile import GdxFile
-from .gams import GAMSSet, GAMSScalar, GAMSParameter
+from .gams import GAMSSet, GAMSScalar, GAMSParameter, GAMSVariable

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2022-07-02
+### Added
+* Added the possibility to read GAMS variables and convert them into pandas DataFrames
+
 ## [2.1.1] - 2020-08-20
 ### Added
 * Add index names from symbol domain if defined when converting to a pandas object.

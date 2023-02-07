@@ -250,3 +250,79 @@ class GAMSParameter(_GAMSNDimSymbol):
 
         return df
 
+
+class GAMSVariable(_GAMSNDimSymbol):
+    """Class for GAMS Variables
+
+    Attributes:
+        domain (list): List of set names that make the domain of the symbol
+        expl_text (str): Symbol explanatory text
+
+    Methods:
+        keys: Return a view to the symbol's keys
+        values: Return a view to the symbol's values
+    """
+
+    def __init__(
+            self,
+            data: Mapping[tuple, float],
+            domain: Sequence[str] = None,
+            expl_text: str = '',
+    ):
+        """Constructor for GAMSParameter
+
+        Args:
+            data: Dictionay of keys and values
+            domain (optional): List of domain set names, use `None` for the universal set
+            expl_text (optional): Explanatory text
+
+        Raises:
+            ValueError
+        """
+
+        # Check arguments
+        try:
+            super().__init__(data.keys(), domain, expl_text)
+        except AttributeError:
+            raise ValueError("Data must be a mapping")
+        self._type = 'Parameter'
+        self._data = data
+
+    def keys(self):
+        return self._data.keys()
+
+    def values(self):
+        try:
+            return self._data.values()
+        except TypeError:  # Support self.data being a pandas.Series
+            return self._data.values
+
+    def __getitem__(self, key):
+        return self._data[key]
+
+    def __iter__(self):
+        self._iterator = iter(self._data.items())
+        return self
+
+    def __next__(self):
+        key, val = next(self._iterator)
+        return key, float(val)
+
+    def to_pandas(self):
+        try:
+            import pandas as pd
+        except ImportError:
+            raise ImportError(
+                "This feature needs pandas package. "
+                "Please use pip or conda to install pandas"
+            )
+        df = pd.DataFrame(iter(self.values()), self.keys())
+        df.name = self.expl_text
+
+        if self.domain:
+            if isinstance(df.index, pd.MultiIndex):
+                df.index.names = self.domain
+            else:
+                df.index.name = self.domain[0]
+
+        return df
