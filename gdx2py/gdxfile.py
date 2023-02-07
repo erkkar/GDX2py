@@ -4,7 +4,6 @@
 
 __author__ = "Erkka Rinne"
 
-
 import sys
 import os.path
 import math
@@ -12,10 +11,11 @@ from copy import copy
 from warnings import warn
 from collections.abc import Mapping, Sequence, KeysView, ValuesView
 
-from gdxcc import GMS_VAL_LEVEL, GMS_DT_SET, GMS_DT_PAR
+from gdxcc import GMS_VAL_LEVEL, GMS_VAL_MARGINAL, GMS_VAL_LOWER, GMS_VAL_UPPER, \
+    GMS_DT_SET, GMS_DT_PAR, GMS_DT_VAR
 import gdxcc
 
-from .gams import _GAMSSymbol, GAMSSet, GAMSScalar, GAMSParameter
+from .gams import _GAMSSymbol, GAMSSet, GAMSScalar, GAMSParameter, GAMSVariable
 
 # String representations of API constants
 GMS_DTYPES = {
@@ -23,9 +23,9 @@ GMS_DTYPES = {
     'Parameter': GMS_DT_PAR,
     'Scalar': GMS_DT_PAR,
     # Not used at the moments
-    #'Variable': GMS_DT_VAR,
-    #'Equation': GMS_DT_EQU,
-    #'Alias': GMS_DT_ALIAS:
+    'Variable': GMS_DT_VAR,
+    # 'Equation': GMS_DT_EQU,
+    # 'Alias': GMS_DT_ALIAS:
 }
 
 # Define data types
@@ -45,6 +45,13 @@ SPECIAL_VALUES = {
     gdxcc.GMS_SV_EPS: EPS_VALUE,
     gdxcc.GMS_SV_ACR: math.nan,
     gdxcc.GMS_SV_NAINT: math.nan,
+}
+
+VARIABLE_DIMENSIONS = {
+    GMS_VAL_LEVEL: "level",
+    GMS_VAL_MARGINAL: "marginal",
+    GMS_VAL_LOWER: "lower bound",
+    GMS_VAL_UPPER: "upper bound"
 }
 
 GMS_USERINFO_SET_PARAMETER = 0  # UserInfo value for sets and parameters
@@ -346,6 +353,19 @@ class GdxFile(object):
                 )  # Squeze out dimension of 1-dim keys
                 val = value_arr[GMS_VAL_LEVEL]
                 values[i] = SPECIAL_VALUES.get(val, val)
+        elif symtype == GMS_DT_VAR:
+            for i in range(recs):
+                _ret, key_arr, value_arr, _afdim = gdxcc.gdxDataReadStr(self._h)
+                keys[i] = (
+                    key_arr[0] if dim == 1 else tuple(key_arr)
+                )  # Squeze out dimension of 1-dim keys
+
+                value = {}
+                for elem in VARIABLE_DIMENSIONS:
+                    val = value_arr[elem]
+                    value[VARIABLE_DIMENSIONS[elem]] = SPECIAL_VALUES.get(val, val)
+
+                values[i] = value
 
         # Done reading
         gdxcc.gdxDataReadDone(self._h)
@@ -360,6 +380,10 @@ class GdxFile(object):
                 return GAMSParameter(
                     dict(zip(keys, values)), domain=domain, expl_text=expl_text
                 )
+        elif symtype == GMS_DT_VAR:
+            return GAMSVariable(
+                dict(zip(keys, values)), domain=domain, expl_text=expl_text
+            )
 
     def _write_symbol(self, symname: str, symbol: _GAMSSymbol):
         """Write a Pandas series to a GAMS Set symbol
@@ -369,7 +393,11 @@ class GdxFile(object):
 
         Raises:
             RuntimeError
+            NotImplementedError
         """
+
+        if isinstance(symbol, GAMSVariable):
+            raise NotImplementedError
 
         # Get number of dimensions
         dim = symbol.dimension
