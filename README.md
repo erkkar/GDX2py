@@ -2,7 +2,7 @@
 
 [![Documentation Status](https://readthedocs.org/projects/gdx2py/badge/?version=latest)](https://gdx2py.readthedocs.io/en/latest/?badge=latest)
 
-Read and write GAMS Data eXchange (GDX) files using Python. This is a fork of https://github.com/erkkar/GDX2py.
+Read and write GAMS Data eXchange (GDX) files using Python.
 
 ## Requirements
 
