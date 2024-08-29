@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2024-08-20
+### Changed
+* Require `gamsapi` instead of `gdxcc`, because `gdxcc` is now part of GAMS API and 
+not its own package. This change provides support for Python 3.12 without the need 
+to install Microsoft Visual Studio Build Tools for Windows.
+
+# Removed
+* Support for Python 3.6 and 3.7
+
 ## [2.1.1] - 2020-08-20
 ### Added
 * Add index names from symbol domain if defined when converting to a pandas object.

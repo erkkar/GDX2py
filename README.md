@@ -2,12 +2,12 @@
 
 [![Documentation Status](https://readthedocs.org/projects/gdx2py/badge/?version=latest)](https://gdx2py.readthedocs.io/en/latest/?badge=latest)
 
-Read and write GAMS Data eXchange (GDX) files using Python.  
+Read and write GAMS Data eXchange (GDX) files using Python.
 
 ## Requirements
 
-- GAMS: version 24.1 or higher
-- Python: 3.6 or higher
+- GAMS: version 47.0 or higher
+- Python: 3.8 or higher
 
 
 ### Installing GAMS
@@ -40,7 +40,9 @@ Install with
 
 ## Comparison to similar packages
 
-Compared to other packages like [PyGDX](https://github.com/khaeru/py-gdx), [gdx-pandas](https://github.com/NREL/gdx-pandas), [gdxtools](https://github.com/boxblox/gdxtools) and [gdxpy](https://github.com/jackjackk/gdxpy), *GDX2py* relies only on the Python standard library and the low-level GDX API `gdxcc` package which is available on PyPI.
+Compared to other packages like [PyGDX](https://github.com/khaeru/py-gdx), [gdx-pandas](https://github.com/NREL/gdx-pandas), [gdxtools](https://github.com/boxblox/gdxtools) and [gdxpy](https://github.com/jackjackk/gdxpy), *GDX2py* relies 
+only on the Python standard library and the low-level GDX API `gamsapi.core.gdx` module which is part of the GAMS 
+Python API (`gamsapi`) available on PyPI.
  
 
 <hr>

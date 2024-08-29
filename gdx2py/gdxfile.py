@@ -11,10 +11,8 @@ import math
 from copy import copy
 from warnings import warn
 from collections.abc import Mapping, Sequence, KeysView, ValuesView
-
-from gdxcc import GMS_VAL_LEVEL, GMS_DT_SET, GMS_DT_PAR
-import gdxcc
-
+from gams.core.gdx import GMS_VAL_LEVEL, GMS_DT_SET, GMS_DT_PAR
+import gams.core.gdx as gdxcc
 from .gams import _GAMSSymbol, GAMSSet, GAMSScalar, GAMSParameter
 
 # String representations of API constants
